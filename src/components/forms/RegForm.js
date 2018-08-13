@@ -6,6 +6,9 @@ import compose from 'recompose/compose';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Check from '@material-ui/icons/Check';
+import blue from '@material-ui/core/colors/blue';
+
 import {
   syncCheckRegForm,
   asyncCheckUsername,
@@ -18,8 +21,7 @@ const styles = () => ({
     width: '100%'
   }
 });
-// const {fields: {username}, asyncValidating} = this.props;
-// const usernameHasValidated =
+
 //   username.touched && // field has been visited and blurred
 //   username.valid &&   // field has no error
 //   !asyncValidating;   // not currently validating
@@ -27,21 +29,39 @@ const RenderInput = props => {
   const {
     input,
     label,
+    asyncCheckFlag,
     meta: { touched, error, valid, asyncValidating },
     ...rest
   } = props;
+  if (asyncCheckFlag) {
+    return (
+      <div>
+        <TextField
+          label={label}
+          error={!!(touched && error)}
+          helperText={touched && error}
+          {...rest}
+          {...input}
+        />
+        {asyncValidating ? (
+          <CircularProgress size={18} style={{ color: blue[400] }} />
+        ) : touched && valid && !asyncValidating ? (
+          <Check style={{ color: blue[400] }} />
+        ) : (
+          ''
+        )}
+      </div>
+    );
+  }
   return (
     <div>
       <TextField
-        label={label + '-' + touched + '-' + valid + '-' + asyncValidating}
+        label={label}
         error={!!(touched && error)}
         helperText={touched && error}
         {...rest}
         {...input}
       />
-      <div>touched:{touched}</div>
-      <div>valid:{valid}</div>
-      <div>asyncValidating:{asyncValidating}</div>
     </div>
   );
 };
@@ -60,14 +80,13 @@ const RegForm = props => {
   } = props;
   return (
     <form onSubmit={handleSubmit}>
-      <div>asyncValidating:{asyncValidating}</div>
-      <div>fields:{fields}</div>
       <div>{error && <strong>{error}</strong>}</div>
       <div>
         <Field
           name="username"
           component={RenderInput}
           label="用户名"
+          asyncCheckFlag
           normalize={trimWhiteSpaces}
         />
       </div>
