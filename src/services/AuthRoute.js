@@ -1,21 +1,9 @@
-// @flow
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import React from 'react';
-import type { ComponentType, Node } from 'react';
 
-type Props = {
-  user?: string,
-  location: any
-};
-
-type DestructArgs = {
-  component: ComponentType<any>,
-  rest?: Array<mixed>
-};
-
-const AuthRoute = ({ component: Component, ...rest }: DestructArgs) => {
-  class A extends React.Component<Props> {
+const AuthRoute = ({ component: Component, ...rest }) => {
+  class A extends React.Component {
     render() {
       if (this.props.user) {
         return <Route {...rest} render={props => <Component {...props} />} />;

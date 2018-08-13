@@ -1,16 +1,9 @@
-// @flow
 import React from 'react';
-import type { Node as ReactNode } from 'react';
 import { connect } from 'react-redux';
 import Login from './Login';
 
-type props = {
-  user?: string,
-  a: any,
-  children?: ReactNode
-};
-class Home extends React.Component<props> {
-  handle = (event: SyntheticEvent<HTMLButtonElement>) => {
+class Home extends React.Component {
+  handle = event => {
     console.log(event);
     console.log(typeof event.currentTarget);
   };

@@ -6,27 +6,13 @@ import RegForm from '../components/forms/RegForm';
 import { SubmissionError } from 'redux-form';
 import { sleep } from '../services/utility';
 
-type Props = {
-  user?: string,
-  dispatch: Function
-};
-
-class Reg extends React.Component<Props> {
+class Reg extends React.Component {
   handleSubmit = values => {
-    // event.preventDefault();
     console.log('reg.js handlesubmit');
-    // return sleep(1000).then(() => {
-
-    // throw new SubmissionError({
-    //   username: "User does not exist",
-    //   _error: "Login failed!"
-    // });
-    // });
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
       this.props.dispatch({
         type: 'saga-submit',
         resolve,
-        reject,
         data: [1, 2]
       });
     });

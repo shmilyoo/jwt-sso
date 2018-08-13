@@ -1,12 +1,7 @@
-// @flow
 import React from 'react';
 import { connect } from 'react-redux';
 
-type Props = {
-  user?: string
-};
-
-class Login extends React.Component<Props> {
+class Login extends React.Component {
   render() {
     return <div>Login-- {this.props.user}</div>;
   }

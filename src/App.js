@@ -1,4 +1,3 @@
-// @flow
 import React from 'react';
 import { Route, Link, Switch } from 'react-router-dom';
 import Button from '@material-ui/core/Button';
@@ -20,9 +19,9 @@ const styles = theme => ({
   }
 });
 
-class App extends React.Component<any> {
+class App extends React.Component {
   render() {
-    let a: string = '1';
+    let a = '1';
     const { classes } = this.props;
     return (
       <div>

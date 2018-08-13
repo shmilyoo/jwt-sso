@@ -1,6 +1,4 @@
-// @flow
 import React from 'react';
-import type { ComponentType } from 'react';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import purple from '@material-ui/core/colors/purple';
 import green from '@material-ui/core/colors/green';
@@ -23,8 +21,8 @@ const theme = createMuiTheme({
   }
 });
 
-function withRoot(Component: ComponentType<*>) {
-  return class extends React.Component<{}> {
+function withRoot(Component) {
+  return class extends React.Component {
     static displayName = 'material-ui-withRoot';
     // MuiThemeProvider makes the theme available down the React tree
     // thanks to React context.

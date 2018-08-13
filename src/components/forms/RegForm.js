@@ -11,6 +11,7 @@ import {
   asyncCheckUsername,
   shouldAsyncValidate
 } from '../../services/validate';
+import { trimWhiteSpaces } from '../../services/normalize';
 
 const styles = () => ({
   button: {
@@ -26,17 +27,22 @@ const RenderInput = props => {
   const {
     input,
     label,
-    meta: { touched, error },
+    meta: { touched, error, valid, asyncValidating },
     ...rest
   } = props;
   return (
-    <TextField
-      label={label}
-      error={!!(touched && error)}
-      helperText={touched && error}
-      {...rest}
-      {...input}
-    />
+    <div>
+      <TextField
+        label={label + '-' + touched + '-' + valid + '-' + asyncValidating}
+        error={!!(touched && error)}
+        helperText={touched && error}
+        {...rest}
+        {...input}
+      />
+      <div>touched:{touched}</div>
+      <div>valid:{valid}</div>
+      <div>asyncValidating:{asyncValidating}</div>
+    </div>
   );
 };
 
@@ -49,13 +55,21 @@ const RegForm = props => {
     classes,
     isLoading,
     submitting,
+    asyncValidating,
     error
   } = props;
   return (
     <form onSubmit={handleSubmit}>
+      <div>asyncValidating:{asyncValidating}</div>
+      <div>fields:{fields}</div>
       <div>{error && <strong>{error}</strong>}</div>
       <div>
-        <Field name="username" component={RenderInput} label="用户名" />
+        <Field
+          name="username"
+          component={RenderInput}
+          label="用户名"
+          normalize={trimWhiteSpaces}
+        />
       </div>
       <div>
         <Field
@@ -106,7 +120,6 @@ const enchance = compose(
     form: 'regForm',
     shouldAsyncValidate,
     validate: syncCheckRegForm,
-    // asyncValidate: asyncCheckUsername,
     asyncValidate: asyncCheckUsername,
     asyncBlurFields: ['username']
   })

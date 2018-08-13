@@ -42,8 +42,8 @@ export const syncCheckRegForm = values => {
 //   });
 // };
 export const asyncCheckUsername = (values, dispatch) => {
-  return new Promise(() => {
-    dispatch({ type: 'saga-checkUsername', values });
+  return new Promise((resolve, reject) => {
+    dispatch({ type: 'saga-checkUsername', values, resolve, reject });
   });
 };
 
