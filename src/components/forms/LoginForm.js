@@ -28,10 +28,23 @@ const styles = () => ({
   }
 });
 class LoginForm extends React.Component {
+  handleSubmit = values => {
+    const state = this.props.location.state;
+    return new Promise(resolve => {
+      this.props.dispatch({
+        type: accountTypes.SAGA_LOGIN_REQUEST,
+        resolve,
+        values,
+        // 如果是从未授权初始页面跳转到login页面，则成功后跳转回去。
+        // 如果是以dialog方式跳出的login组件，则返回当前页面
+        from: state ? state.from : this.props.location
+      });
+    });
+  };
   render() {
     const { pristine, submitting, error, classes, handleSubmit } = this.props;
     return (
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit(this.handleSubmit)}>
         <div>{error && <strong>{error}</strong>}</div>
         <div>
           <Field

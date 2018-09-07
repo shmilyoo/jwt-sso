@@ -13,8 +13,8 @@ import configureAxios from './axios';
 import { initAuthInfoAtStart } from './services/utility';
 
 const store = configureStore();
-initAuthInfoAtStart(store.dispatch);
 configureAxios(store.dispatch);
+initAuthInfoAtStart(store.dispatch);
 
 ReactDOM.render(
   <Provider store={store}>

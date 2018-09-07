@@ -14,7 +14,7 @@ import AuthRoute from './services/AuthRoute';
 import Home from './containers/Home';
 import Reg from './containers/Reg';
 import Login from './containers/Login';
-import withRoot from './services/withRoot';
+import themeProvider from './services/themeProvider';
 import { actions as commonAction } from './reducers/common';
 import compose from 'recompose/compose';
 
@@ -71,7 +71,7 @@ function mapStateToProps(state) {
 
 export default compose(
   withRouter,
-  withRoot,
+  themeProvider,
   withStyles(styles),
   connect(mapStateToProps)
 )(App);

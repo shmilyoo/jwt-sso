@@ -6,7 +6,7 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 // It's optional.
 const theme = createMuiTheme({
   palette: {
-    background: { default: '#efebe9' },
+    background: { default: '#eee' },
     primary: {
       light: '#757ce8',
       main: '#3f50b5',
@@ -60,7 +60,7 @@ const theme = createMuiTheme({
   }
 });
 
-function withRoot(Component) {
+function themeProvider(Component) {
   return class extends React.Component {
     static displayName = 'material-ui-withRoot';
     // MuiThemeProvider makes the theme available down the React tree
@@ -76,7 +76,7 @@ function withRoot(Component) {
     }
   };
 }
-withRoot.displayName =
+themeProvider.displayName =
   "Hoc to add material-ui's MthemeProvider and CssBaseline";
 
-export default withRoot;
+export default themeProvider;

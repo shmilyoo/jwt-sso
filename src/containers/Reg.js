@@ -6,7 +6,7 @@ import axios from 'axios';
 import RegForm from '../components/forms/RegForm';
 import { SubmissionError } from 'redux-form';
 import { sleep } from '../services/utility';
-import { types as accountType } from '../reducers/account';
+import { types as accountTypes } from '../reducers/account';
 import { actions as accountActions } from '../reducers/account';
 import { Card, withStyles, CardContent, Typography } from '@material-ui/core';
 import compose from 'recompose/compose';
@@ -28,7 +28,11 @@ const styles = theme => ({
 class Reg extends React.Component {
   handleSubmit = values => {
     return new Promise(resolve => {
-      this.props.dispatch(accountActions.sagaReg(values, resolve));
+      this.props.dispatch({
+        type: accountTypes.SAGA_REG_REQUEST,
+        resolve,
+        values
+      });
     });
   };
 
@@ -37,7 +41,7 @@ class Reg extends React.Component {
     return (
       <div className={classes.container}>
         {username ? (
-          <Redirect to={{ pathname: '/' }} />
+          <Redirect to="/" />
         ) : (
           <Card className={classes.card}>
             <CardContent>

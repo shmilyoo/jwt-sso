@@ -39,7 +39,12 @@ export const syncCheckRegForm = values => {
  */
 export const asyncCheckUsername = (values, dispatch) => {
   return new Promise((resolve, reject) => {
-    dispatch(accountActions.sagaCheckUsername(values, resolve, reject));
+    dispatch({
+      type: accountTypes.SAGA_CHECK_USERNAME,
+      values,
+      resolve,
+      reject
+    });
   });
 };
 

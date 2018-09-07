@@ -25,7 +25,7 @@ import { server_base_url_product, server_baseURL_dev } from './config';
  */
 const configureAxios = dispatch => {
   // 设置全局参数，如响应超市时间，请求前缀等。
-  axios.defaults.timeout = 500;
+  axios.defaults.timeout = 3000;
   axios.defaults.withCredentials = true;
   // post会根据data的格式自动设置contentType
   // axios.defaults.headers.post["Content-Type"] =
@@ -62,7 +62,6 @@ const configureAxios = dispatch => {
       } else {
         config.baseURL = server_baseURL_dev;
       }
-
       if (config.method === 'post') {
         // content-type 自动设置为application/x-www-form-urlencoded
         config.data = qs.stringify(config.data);

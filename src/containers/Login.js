@@ -44,7 +44,6 @@ class Login extends React.Component {
                 登录
               </Typography>
               <LoginForm onSubmit={this.handleSubmit} />
-              {/* <LoginForm /> */}
             </CardContent>
           </Card>
         )}
@@ -55,7 +54,7 @@ class Login extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    // username: state.account.username
+    username: state.account.username
   };
 }
 export default compose(
