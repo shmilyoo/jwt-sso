@@ -1,0 +1,15 @@
+html {
+  font-size: 62.5%;
+  height: 100%;
+}
+body {
+  font-size: 1.4rem;
+  height: 100%;
+}
+#root {
+  height: 100%;
+}
+* {
+  margin: 0;
+  padding: 0;
+}

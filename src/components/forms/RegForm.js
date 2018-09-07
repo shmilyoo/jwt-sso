@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -8,67 +9,32 @@ import { withStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Check from '@material-ui/icons/Check';
 import blue from '@material-ui/core/colors/blue';
+import grey from '@material-ui/core/colors/grey';
 
 import {
   syncCheckRegForm,
   asyncCheckUsername,
-  shouldAsyncValidate
+  shouldAsyncValidate,
+  required,
+  checkUsername
 } from '../../services/validate';
-import { trimWhiteSpaces } from '../../services/normalize';
+import { trim } from '../../services/normalize';
+import { RenderTextField } from './renderFields';
+import { Typography } from '@material-ui/core';
 
 const styles = () => ({
-  button: {
-    width: '100%'
+  buttonLine: {
+    marginTop: '2rem',
+    display: 'flex',
+    justifyContent: 'space-around'
+  },
+  buttomText: {
+    color: grey[500]
   }
 });
 
-//   username.touched && // field has been visited and blurred
-//   username.valid &&   // field has no error
-//   !asyncValidating;   // not currently validating
-const RenderInput = props => {
-  const {
-    input,
-    label,
-    asyncCheckFlag,
-    meta: { touched, error, valid, asyncValidating },
-    ...rest
-  } = props;
-  if (asyncCheckFlag) {
-    return (
-      <div>
-        <TextField
-          label={label}
-          error={!!(touched && error)}
-          helperText={touched && error}
-          {...rest}
-          {...input}
-        />
-        {asyncValidating ? (
-          <CircularProgress size={18} style={{ color: blue[400] }} />
-        ) : touched && valid && !asyncValidating ? (
-          <Check style={{ color: blue[400] }} />
-        ) : (
-          ''
-        )}
-      </div>
-    );
-  }
-  return (
-    <div>
-      <TextField
-        label={label}
-        error={!!(touched && error)}
-        helperText={touched && error}
-        {...rest}
-        {...input}
-      />
-    </div>
-  );
-};
-
 const RegForm = props => {
   const {
-    fields,
     handleSubmit,
     pristine,
     reset,
@@ -84,29 +50,32 @@ const RegForm = props => {
       <div>
         <Field
           name="username"
-          component={RenderInput}
+          component={RenderTextField}
           label="用户名"
           asyncCheckFlag
-          normalize={trimWhiteSpaces}
+          validate={[required, checkUsername]}
+          normalize={trim}
         />
       </div>
       <div>
         <Field
           name="password1"
-          component={RenderInput}
+          component={RenderTextField}
           type="password"
+          validate={required}
           label="密码"
         />
       </div>
       <div>
         <Field
           name="password2"
-          component={RenderInput}
+          component={RenderTextField}
           type="password"
+          validate={required}
           label="确认密码"
         />
       </div>
-      <div>
+      <div className={classes.buttonLine}>
         <Button
           type="submit"
           variant="raised"
@@ -117,13 +86,17 @@ const RegForm = props => {
         </Button>
         <Button
           variant="flat"
-          color="primary"
+          // color="second"
           onClick={reset}
           disabled={pristine || submitting}
         >
           清除
         </Button>
       </div>
+      <Typography align="right" className={classes.buttomText}>
+        已有账户,
+        <Link to="/login">登录</Link>
+      </Typography>
     </form>
   );
 };

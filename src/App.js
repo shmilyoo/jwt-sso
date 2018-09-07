@@ -1,39 +1,79 @@
 import React from 'react';
-import { Route, Link, Switch } from 'react-router-dom';
-import Button from '@material-ui/core/Button';
-import IconButton from '@material-ui/core/IconButton';
+import { connect } from 'react-redux';
+import { Route, Link, Switch, withRouter } from 'react-router-dom';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { withStyles, Typography } from '@material-ui/core';
+import {
+  withStyles,
+  Typography,
+  Snackbar,
+  SnackbarContent,
+  Button,
+  IconButton
+} from '@material-ui/core';
 import AuthRoute from './services/AuthRoute';
 import Home from './containers/Home';
 import Reg from './containers/Reg';
 import Login from './containers/Login';
 import withRoot from './services/withRoot';
+import { actions as commonAction } from './reducers/common';
+import compose from 'recompose/compose';
 
 const styles = theme => ({
-  button: {
-    margin: theme.spacing.unit
+  info: {
+    backgroundColor: theme.palette.info.main
   },
-  input: {
-    display: 'none'
+  warn: {
+    backgroundColor: theme.palette.warn.main
+  },
+  error: {
+    backgroundColor: theme.palette.error.main
   }
 });
 
 class App extends React.Component {
+  closeMessage = () => {
+    this.props.dispatch(commonAction.closeMessage());
+  };
   render() {
-    let a = '1';
-    const { classes } = this.props;
+    const { classes, message, messageType, showMessage } = this.props;
     return (
-      <div>
-        <div>aaaa</div>
+      <React.Fragment>
         <Switch>
           <Route exact path="/login" component={Login} />
-          <Route exact path="/reg" component={Reg} />
+          <Route exact path="/reg" component={Reg} />} />
           <AuthRoute path="/" component={Home} />
         </Switch>
-      </div>
+        <Snackbar
+          open={showMessage}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          autoHideDuration={3000}
+          onClose={this.closeMessage}
+        >
+          <SnackbarContent
+            className={classes[messageType]}
+            message={<strong>{message}</strong>}
+          />
+        </Snackbar>
+      </React.Fragment>
     );
   }
 }
+function mapStateToProps(state) {
+  return {
+    showMessage: state.common.showMessage,
+    message: state.common.message,
+    messageType: state.common.messageType
+  };
+}
 
-export default withRoot(withStyles(styles)(App));
+export default compose(
+  withRouter,
+  withRoot,
+  withStyles(styles),
+  connect(mapStateToProps)
+)(App);
+
+// export default withRouter(connect(mapStateToProps)(App));

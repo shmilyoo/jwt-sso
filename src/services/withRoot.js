@@ -1,22 +1,61 @@
 import React from 'react';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import purple from '@material-ui/core/colors/purple';
-import green from '@material-ui/core/colors/green';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
 // A theme with custom primary and secondary color.
 // It's optional.
 const theme = createMuiTheme({
   palette: {
+    background: { default: '#efebe9' },
     primary: {
-      light: purple[300],
-      main: purple[500],
-      dark: purple[700]
+      light: '#757ce8',
+      main: '#3f50b5',
+      dark: '#002884',
+      contrastText: '#fff'
     },
     secondary: {
-      light: green[300],
-      main: green[500],
-      dark: green[700]
+      light: '#82e9de',
+      main: '#4db6ac',
+      dark: '#00867d',
+      contrastText: '#000'
+    },
+    info: {
+      light: '#bef67a',
+      main: '#8bc34a',
+      dark: '#5a9216'
+    },
+    warn: {
+      light: '#fff350',
+      main: '#ffc107',
+      dark: '#c79100'
+    }
+  },
+  typography: {
+    // Tell Material-UI what's the font-size on the html element is.
+    htmlFontSize: 10,
+    fontSize: 14,
+    // Use the system font instead of the default Roboto font.
+    fontFamily: [
+      '-apple-system',
+      'BlinkMacSystemFont',
+      '"Segoe UI"',
+      'Roboto',
+      '"Helvetica Neue"',
+      'Arial',
+      'sans-serif',
+      '"Apple Color Emoji"',
+      '"Segoe UI Emoji"',
+      '"Segoe UI Symbol"'
+    ].join(','),
+    title2: {
+      fontSize: '2rem'
+    },
+    title3: {
+      fontSize: '3rem',
+      margin: '2rem 0'
+    },
+    title4: {
+      fontSize: '4rem'
     }
   }
 });

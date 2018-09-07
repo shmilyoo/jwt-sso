@@ -1,26 +1,53 @@
 // @flow
 import React from 'react';
+import { Redirect, Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import axios from 'axios';
 import RegForm from '../components/forms/RegForm';
 import { SubmissionError } from 'redux-form';
 import { sleep } from '../services/utility';
+import { types as accountType } from '../reducers/account';
+import { actions as accountActions } from '../reducers/account';
+import { Card, withStyles, CardContent, Typography } from '@material-ui/core';
+import compose from 'recompose/compose';
+
+const styles = theme => ({
+  card: {
+    width: '30rem',
+    margin: 'auto'
+  },
+  container: {
+    height: '100%',
+    display: 'flex'
+    // justifyContent: "center",
+    // alignItems: "center"
+  },
+  title: theme.typography.title3
+});
 
 class Reg extends React.Component {
   handleSubmit = values => {
-    console.log('reg.js handlesubmit');
     return new Promise(resolve => {
-      this.props.dispatch({
-        type: 'saga-submit',
-        resolve,
-        data: [1, 2]
-      });
+      this.props.dispatch(accountActions.sagaReg(values, resolve));
     });
   };
+
   render() {
+    const { classes, username } = this.props;
     return (
-      <div>
-        <RegForm onSubmit={this.handleSubmit} />
+      <div className={classes.container}>
+        {username ? (
+          <Redirect to={{ pathname: '/' }} />
+        ) : (
+          <Card className={classes.card}>
+            <CardContent>
+              <Typography align="center" className={classes.title}>
+                注册
+              </Typography>
+              <RegForm onSubmit={this.handleSubmit} />
+            </CardContent>
+          </Card>
+        )}
       </div>
     );
   }
@@ -28,8 +55,11 @@ class Reg extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    user: state.account.user
+    username: state.account.username
   };
 }
 
-export default connect(mapStateToProps)(Reg);
+export default compose(
+  withStyles(styles),
+  connect(mapStateToProps)
+)(Reg);
