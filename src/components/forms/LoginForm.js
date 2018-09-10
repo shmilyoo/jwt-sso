@@ -73,12 +73,7 @@ class LoginForm extends React.Component {
           >
             登录
           </Button>
-          <Field
-            name="remember1"
-            defaultChecked
-            component={renderSwitch}
-            label="记住我"
-          />
+          <Field name="remember" component={renderSwitch} label="记住我" />
         </div>
         <Typography align="right" className={classes.buttomText}>
           没有账户,
@@ -98,7 +93,8 @@ const enchance = compose(
   withStyles(styles),
   connect(mapStateToProps),
   reduxForm({
-    form: 'loginForm'
+    form: 'loginForm',
+    initialValues: { remember: 'aaa' }
   })
 );
 

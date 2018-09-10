@@ -107,8 +107,8 @@ function* getUserInfoFlow() {
     const response = yield axios.get(`account/info/${username}`);
     console.log(response);
     console.log('测试 强制判断localstorage token信息和远端不一致');
-    yield put({ type: accountTypes.SAGA_FORCE_LOGOUT });
-    yield put(commonActions.showMessage('远程验证出错，强制退出', 'warn'));
+    // yield put({ type: accountTypes.SAGA_FORCE_LOGOUT });
+    // yield put(commonActions.showMessage('远程验证出错，强制退出', 'warn'));
   }
 }
 

@@ -61,6 +61,11 @@ export const RenderTextField = ({
 
 export const renderSwitch = ({ input, label, ...rest }) => {
   return (
-    <FormControlLabel control={<Switch {...input} {...rest} />} label={label} />
+    <FormControlLabel
+      control={
+        <Switch {...input} {...rest} value="remember" checked={input.value} />
+      }
+      label={label}
+    />
   );
 };
