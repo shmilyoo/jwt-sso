@@ -1,9 +1,12 @@
+import { sysName } from '../config';
+
 export const types = {
   START_LOADING: 'COMMON/START_LOADING',
   STOP_LOADING: 'COMMON/STOP_LOADING',
   TOGGLE_LOADING: 'COMMON/TOGGLE_LOADING',
   SHOW_MESSAGE: 'COMMON/SHOW_MESSAGE',
-  CLOSE_MESSAGE: 'COMMON/CLOSE_MESSAGE'
+  CLOSE_MESSAGE: 'COMMON/CLOSE_MESSAGE',
+  CHANGE_TITLE: 'COMMON/CHANGE_TITLE'
 };
 
 export const actions = {
@@ -59,6 +62,12 @@ export default (state = initState, action) => {
         ...state,
         showMessage: false,
         message: ''
+      };
+    case types.CHANGE_TITLE:
+      document.title = `${action.title} - ${sysName}`;
+      return {
+        ...state,
+        title: action.title
       };
     default:
       return state;

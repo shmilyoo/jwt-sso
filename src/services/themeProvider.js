@@ -28,6 +28,10 @@ const theme = createMuiTheme({
       light: '#fff350',
       main: '#ffc107',
       dark: '#c79100'
+    },
+    text: {
+      primary: 'rgba(0, 0, 0, 0.87)',
+      secondary: 'rgba(0, 0, 0, 0.54)'
     }
   },
   typography: {

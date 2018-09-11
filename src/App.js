@@ -34,6 +34,17 @@ class App extends React.Component {
   closeMessage = () => {
     this.props.dispatch(commonAction.closeMessage());
   };
+  constructor(props) {
+    super(props);
+    console.log('App constructor');
+  }
+  componentDidUpdate() {
+    console.log('App did update');
+  }
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('App should update');
+    return true;
+  }
   render() {
     const { classes, message, messageType, showMessage } = this.props;
     return (

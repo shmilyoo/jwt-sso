@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Link, withRouter, Route } from 'react-router-dom';
 import compose from 'recompose/compose';
 import classNames from 'classnames';
 import { types as accountTypes } from '../reducers/account';
@@ -9,47 +8,24 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  Drawer,
-  Divider,
-  List,
-  Button,
   IconButton,
-  Tooltip,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Collapse,
-  CircularProgress
+  Tooltip
 } from '@material-ui/core';
 import {
   Menu as MenuIcon,
   Person as UserIcon,
-  PowerSettingsNew as LogoutIcon,
-  ExpandLess as ExpandLessIcon,
-  ExpandMore as ExpandMoreIcon
+  PowerSettingsNew as LogoutIcon
 } from '@material-ui/icons';
-import { leftMenu } from '../config';
-import history from '../history';
+import HomeLeft from '../components/HomeLeft';
 
-const drawerWidth = 200;
+const drawerWidth = 250;
 
 const style = theme => ({
   homeRoot: {
     height: '100%',
     width: '100%'
   },
-  left: {
-    height: '100%',
-    width: drawerWidth
-  },
-  leftPage: {
-    width: drawerWidth,
-    background: 'rgba(0,0,0,0.7)',
-    zIndex: 0 // pager原本zindex为1200， NProgress会被遮住
-  },
-  leftHeader: {
-    height: 64
-  },
+
   right: {
     position: 'absolute',
     top: 0,
@@ -86,82 +62,26 @@ class Home extends React.Component {
     super(props);
     console.log('home construct');
   }
-
+  componentDidUpdate() {
+    console.log('home did update');
+  }
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('home should update');
+    return true;
+  }
   state = {
     open: true
   };
   logout = () => {
     this.props.dispatch({ type: accountTypes.SAGA_LOGOUT_REQUEST });
   };
-  drawItemClick = url => () => {
-    history.push(url);
-  };
-  componentWillMount() {
-    this.setState({ account: true });
-  }
+
   render() {
     console.log('render home');
-    const { classes } = this.props;
+    const { classes, title } = this.props;
     return (
       <div className={classes.homeRoot}>
-        <div className={classes.left}>
-          <Drawer
-            classes={{ paper: classes.leftPage }}
-            variant="persistent"
-            open={this.state.open}
-          >
-            <div className={classes.leftHeader}>left-header</div>
-            <Divider />
-            <List component="nav">
-              {leftMenu.map(ele => (
-                <div key={ele.title}>
-                  <ListItem
-                    button
-                    onClick={
-                      ele.children
-                        ? () => {
-                            this.setState({
-                              [ele.state]: !this.state[ele.state]
-                            });
-                          }
-                        : this.drawItemClick(ele.path)
-                    }
-                  >
-                    <ListItemIcon>
-                      <MenuIcon />
-                    </ListItemIcon>
-                    <ListItemText inset primary={ele.title} />
-                    {ele.children ? (
-                      this.state[ele.state] ? (
-                        <ExpandLessIcon />
-                      ) : (
-                        <ExpandMoreIcon />
-                      )
-                    ) : null}
-                  </ListItem>
-                  {ele.children ? (
-                    <Collapse
-                      in={this.state[ele.state] ? true : false}
-                      timeout="auto"
-                    >
-                      <List component="div" disablePadding>
-                        {ele.children.map(child => (
-                          <ListItem
-                            key={child.title}
-                            button
-                            onClick={this.drawItemClick(child.path)}
-                          >
-                            <ListItemText inset primary={child.title} />
-                          </ListItem>
-                        ))}
-                      </List>
-                    </Collapse>
-                  ) : null}
-                </div>
-              ))}
-            </List>
-          </Drawer>
-        </div>
+        <HomeLeft open={this.state.open} />
         <div
           className={classNames(classes.right, {
             [classes.rightShift]: !this.state.open
@@ -178,7 +98,7 @@ class Home extends React.Component {
                   <MenuIcon />
                 </IconButton>
                 <Typography style={{ flex: 'auto' }} variant="title">
-                  Photos
+                  {title}
                 </Typography>
                 <IconButton>
                   <UserIcon />
@@ -192,7 +112,16 @@ class Home extends React.Component {
             </AppBar>
           </div>
           <div className={classes.main}>
-            <Route />
+            {/* <Route path="account/" component={} */}
+            <div style={{ height: '200px' }}>200px</div>
+            <div style={{ height: '200px' }}>200px</div>
+            <div style={{ height: '200px' }}>200px</div>
+            <div style={{ height: '200px' }}>200px</div>
+            <div style={{ height: '200px' }}>200px</div>
+            <div style={{ height: '200px' }}>200px</div>
+            <div style={{ height: '200px' }}>200px</div>
+            <div style={{ height: '200px' }}>200px</div>
+            <div style={{ height: '200px' }}>200px</div>
           </div>
           <div className={classes.footer}>@copyright 2018</div>
         </div>
@@ -203,7 +132,8 @@ class Home extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    username: state.account.username
+    username: state.account.username,
+    title: state.common.title
   };
 }
 
