@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import compose from 'recompose/compose';
 import classNames from 'classnames';
-import { types as accountTypes } from '../reducers/account';
+import { types as accountTypes } from '../../reducers/account';
 import {
   withStyles,
   AppBar,
@@ -17,9 +17,9 @@ import {
   Person as UserIcon,
   PowerSettingsNew as LogoutIcon
 } from '@material-ui/icons';
-import LeftNav from '../components/LeftNav';
-import Info from './account/Info';
-import { sysName, leftMenu } from '../config';
+import LeftNav from '../../components/LeftNav';
+import Info from '../account/Info';
+import { adminLeftMenu } from '../../config';
 
 const drawerWidth = 250;
 
@@ -37,11 +37,7 @@ const style = theme => ({
     flexDirection: 'column',
     width: `calc(100% - ${drawerWidth}px)`,
     marginLeft: drawerWidth,
-    height: '100%',
-    transition: theme.transitions.create(['margin', 'width'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen
-    })
+    height: '100%'
   },
   rightShift: {
     width: '100%',
@@ -51,42 +47,27 @@ const style = theme => ({
     padding: 20,
     flex: 'auto'
   },
-  footer: {
-    padding: 10,
-    textAlign: 'right'
-  },
   white: {
     color: 'white'
   }
 });
 
-class Home extends React.Component {
-  state = {
-    leftOpen: true
-  };
+class AdminRoot extends React.Component {
   logout = () => {
     this.props.dispatch({ type: accountTypes.SAGA_LOGOUT_REQUEST });
   };
 
   render() {
-    console.log('render home');
+    console.log('render admin root');
     const { classes, title } = this.props;
     return (
       <div className={classes.homeRoot}>
-        <LeftNav menu={leftMenu} open={this.state.leftOpen} header={sysName} />
-        <div
-          className={classNames(classes.right, {
-            [classes.rightShift]: !this.state.leftOpen
-          })}
-        >
+        <LeftNav menu={adminLeftMenu} open={true} header="后台管理" />
+        <div className={classes.right}>
           <div className={classes.header}>
             <AppBar color="secondary" position="static">
               <Toolbar style={{ display: 'flex' }}>
-                <IconButton
-                  onClick={() => {
-                    this.setState({ leftOpen: !this.state.leftOpen });
-                  }}
-                >
+                <IconButton>
                   <MenuIcon />
                 </IconButton>
                 <Typography style={{ flex: 'auto' }} variant="title">
@@ -105,21 +86,17 @@ class Home extends React.Component {
           </div>
           <div className={classes.main}>
             <Switch>
-              <Route path="/account/info" component={Info} />
-              <Route path="/account/passwd" component={null} />
-              <Route path="/about" component={null} />
+              <Route path="/admin/dept" component={Info} />
             </Switch>
           </div>
-          <div className={classes.footer}>@copyright 2018</div>
         </div>
       </div>
     );
   }
 }
-
 function mapStateToProps(state) {
   return {
-    username: state.account.username,
+    adminName: state.account.adminName,
     title: state.common.title
   };
 }
@@ -127,4 +104,4 @@ function mapStateToProps(state) {
 export default compose(
   withStyles(style),
   connect(mapStateToProps)
-)(Home);
+)(AdminRoot);

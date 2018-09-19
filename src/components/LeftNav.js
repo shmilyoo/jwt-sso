@@ -1,5 +1,4 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React from 'react';
 import { withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
 import {
@@ -20,9 +19,7 @@ import {
   ExpandLess as ExpandLessIcon,
   ExpandMore as ExpandMoreIcon
 } from '@material-ui/icons';
-import { leftMenu, sysName } from '../config';
 import history from '../history';
-import { types as commonTypes } from '../reducers/common';
 import classnames from 'classnames';
 
 const drawerWidth = 250;
@@ -49,28 +46,28 @@ const style = {
     fontSize: '1.8rem'
   },
   link2: {
-    fontSize: '1.5rem'
+    fontSize: '1.5rem',
+    paddingLeft: '10px'
   },
   selected: {
     backgroundColor: '#333'
   }
 };
 
-class HomeLeft extends React.Component {
+class LeftNav extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       [props.location.pathname.split('/')[1]]: true
     };
+    console.log('home left construct');
   }
-
-  state = {};
   drawItemClick = url => () => {
     // this.props.dispatch({ type: commonTypes.CHANGE_TITLE, title }); 在各自页面中设置title
     history.push(url);
   };
   render() {
-    const { classes, open, location } = this.props;
+    const { classes, open, location, header, menu } = this.props;
     console.log('home left render');
     return (
       <div className={classes.left}>
@@ -85,11 +82,11 @@ class HomeLeft extends React.Component {
             align="center"
             variant="title"
           >
-            {sysName}
+            {header}
           </Typography>
-          <Divider />
+          <Divider style={{ margin: '0 20px' }} />
           <List component="nav">
-            {leftMenu.map(ele => (
+            {menu.map(ele => (
               <div key={ele.title}>
                 <ListItem
                   button
@@ -106,7 +103,7 @@ class HomeLeft extends React.Component {
                       : this.drawItemClick(ele.path, ele.title)
                   }
                 >
-                  <ListItemIcon>{<ele.icon />}</ListItemIcon>
+                  {ele.icon && <ListItemIcon>{<ele.icon />}</ListItemIcon>}
                   <ListItemText
                     inset
                     primary={ele.title}
@@ -157,12 +154,7 @@ class HomeLeft extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {};
-}
-
 export default compose(
   withStyles(style),
-  withRouter,
-  connect(mapStateToProps)
-)(HomeLeft);
+  withRouter
+)(LeftNav);

@@ -2,6 +2,7 @@ import { fork, take, put, call } from 'redux-saga/effects';
 import { SubmissionError, stopSubmit, stopAsyncValidation } from 'redux-form';
 import { sleep, md5Passwd } from '../services/utility';
 import { types as accountTypes } from '../reducers/account';
+import { actions as accountActions } from '../reducers/account';
 import { types as commonTypes } from '../reducers/common';
 import { actions as commonActions } from '../reducers/common';
 import axios from 'axios';
@@ -47,11 +48,7 @@ function* loginFlow() {
       if (response.success) {
         yield call(resolve);
         localStorage.setItem('token', response.data.token);
-        yield put({
-          type: accountTypes.LOGIN_SUCCESS,
-          username,
-          active: response.data.active
-        });
+        yield put(accountActions.loginSuccess(username, response.data.active));
         isLogin = true;
         yield call(history.push, from.pathname); // 根据url的redirect进行跳转
       } else {
@@ -68,7 +65,8 @@ function* loginFlow() {
         accountTypes.SAGA_FORCE_LOGOUT
       ]);
       console.log(`接收到logout请求${type}`);
-      yield put({ type: accountTypes.LOGOUT_SUCCESS });
+      // yield put({ type: accountTypes.LOGOUT_SUCCESS });
+      yield put(accountActions.logoutSuccess());
       isLogin = false;
     }
   }

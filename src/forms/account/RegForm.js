@@ -1,16 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import compose from 'recompose/compose';
 import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import Check from '@material-ui/icons/Check';
-import blue from '@material-ui/core/colors/blue';
 import grey from '@material-ui/core/colors/grey';
-
 import {
   syncCheckRegForm,
   asyncCheckUsername,
@@ -19,7 +14,7 @@ import {
   checkUsername
 } from '../../services/validate';
 import { trim } from '../../services/normalize';
-import { RenderTextField } from './renderFields';
+import { renderTextField } from '../../forms/renderFields';
 import { Typography } from '@material-ui/core';
 
 const styles = () => ({
@@ -34,23 +29,14 @@ const styles = () => ({
 });
 
 const RegForm = props => {
-  const {
-    handleSubmit,
-    pristine,
-    reset,
-    classes,
-    isLoading,
-    submitting,
-    asyncValidating,
-    error
-  } = props;
+  const { handleSubmit, pristine, reset, classes, submitting, error } = props;
   return (
     <form onSubmit={handleSubmit}>
       <div>{error && <strong>{error}</strong>}</div>
       <div>
         <Field
           name="username"
-          component={RenderTextField}
+          component={renderTextField}
           label="用户名"
           asyncCheckFlag
           validate={[required, checkUsername]}
@@ -60,7 +46,7 @@ const RegForm = props => {
       <div>
         <Field
           name="password1"
-          component={RenderTextField}
+          component={renderTextField}
           type="password"
           validate={required}
           label="密码"
@@ -69,7 +55,7 @@ const RegForm = props => {
       <div>
         <Field
           name="password2"
-          component={RenderTextField}
+          component={renderTextField}
           type="password"
           validate={required}
           label="确认密码"

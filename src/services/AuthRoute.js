@@ -2,16 +2,20 @@
 import { Route, Redirect, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import React from 'react';
+import { actions as commonActions } from '../reducers/common';
+import history from '../history';
 
 function mapStateToProps(state) {
-  return { username: state.account.username };
+  return { username: state.account.username, active: state.account.active };
 }
 
 const AuthRoute = props => {
-  const { component: Component, username, location, ...rest } = props;
+  const { component: Component, username, active, location, ...rest } = props;
   if (username) {
-    // if(!this.props.username.active)  添加功能，区别对待正常用户 禁用用户和未激活用户
-    // 重定向到用户资料设置页
+    // if (active === 1 && location.pathname !== '/account/info') {
+    //   // 重定向到用户资料设置页;
+    //   return <Redirect to="/account/info?type=basic" />;
+    // }
     return <Route {...rest} render={props => <Component {...props} />} />;
   } else {
     const _to = {

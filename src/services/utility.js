@@ -10,6 +10,7 @@ export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
  */
 export const initAuthInfoAtStart = dispatch => {
   console.log('init start');
+  // 修改为cookie 存储
   const token = localStorage.getItem('token');
   // decode token， state中dispatch设置username active 等信息，判断过期时间等
   if (token) {
@@ -20,11 +21,12 @@ export const initAuthInfoAtStart = dispatch => {
         username: decoded.username,
         active: decoded.active || 1
       });
+      // 改为cookie session方案，不再做检查了
       // 如果本地保存有用户信息，则从服务器获取用户实时相关信息，避免本地信息过期或被篡改
-      dispatch({
-        type: accountType.SAGA_GET_USER_INFO,
-        username: decoded.username
-      });
+      // dispatch({
+      //   type: accountType.SAGA_GET_USER_INFO,
+      //   username: decoded.username
+      // });
     }
   }
 };

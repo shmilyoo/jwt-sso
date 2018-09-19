@@ -10,20 +10,22 @@ export const types = {
 };
 
 export const actions = {
-  showMessage: (message, messageType) => {
-    messageType =
-      ['info', 'warn', 'error'].indexOf(messageType) >= 0
-        ? messageType
-        : 'info';
-    return {
-      type: types.SHOW_MESSAGE,
-      message,
-      messageType
-    };
-  },
+  showMessage: (message, messageType) => ({
+    type: types.SHOW_MESSAGE,
+    message,
+    messageType:
+      ['info', 'warn', 'error'].indexOf(messageType) >= 0 ? messageType : 'info'
+  }),
   closeMessage: () => ({
     type: types.CLOSE_MESSAGE
-  })
+  }),
+  changeTitle: title => {
+    document.title = `${title} - ${sysName}`;
+    return {
+      type: types.CHANGE_TITLE,
+      title
+    };
+  }
 };
 
 const initState = {
@@ -64,7 +66,6 @@ export default (state = initState, action) => {
         message: ''
       };
     case types.CHANGE_TITLE:
-      document.title = `${action.title} - ${sysName}`;
       return {
         ...state,
         title: action.title

@@ -30,4 +30,32 @@ export const leftMenu = [
   { title: '关于', path: '/about', icon: AccountBox }
 ];
 
+export const adminLeftMenu = [
+  {
+    title: '组织机构',
+    state: 'organ',
+    children: [
+      { title: '部门管理', path: '/admin/organ/dept' },
+      { title: '人员管理', path: '/admin/organ/person' }
+    ]
+  },
+  {
+    title: '接口管理',
+    state: 'interface',
+    children: [
+      { title: '接口注册', path: '/admin/interface/api' },
+      { title: 'sso管理', path: '/admin/interface/sso' }
+    ]
+  },
+  {
+    title: '超级管理',
+    state: 'super',
+    children: [
+      { title: '添加管理', path: '/admin/super/addAdmin' },
+      { title: '管理列表', path: '/admin/super/admins' }
+    ]
+  },
+  { title: '关于', state: 'about', path: '/admin/about' }
+];
+
 export default config;

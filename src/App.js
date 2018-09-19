@@ -12,11 +12,13 @@ import {
 } from '@material-ui/core';
 import AuthRoute from './services/AuthRoute';
 import Home from './containers/Home';
-import Reg from './containers/Reg';
-import Login from './containers/Login';
+import Reg from './containers/account/Reg';
+import Login from './containers/account/Login';
 import themeProvider from './services/themeProvider';
 import { actions as commonAction } from './reducers/common';
 import compose from 'recompose/compose';
+import AdminRoot from './containers/admin/AdminRoot';
+import AdminLogin from './containers/admin/Login';
 
 const styles = theme => ({
   info: {
@@ -52,6 +54,8 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/login" component={Login} />
           <Route exact path="/reg" component={Reg} />} />
+          <Route path="/admin/login" component={AdminLogin} />
+          <Route path="/admin" component={AdminRoot} />
           <AuthRoute path="/" component={Home} />
         </Switch>
         <Snackbar

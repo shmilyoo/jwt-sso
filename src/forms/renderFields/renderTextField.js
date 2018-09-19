@@ -7,31 +7,35 @@ import {
   Switch,
   CircularProgress,
   TextField,
-  InputAdornment
+  InputAdornment,
+  MenuItem
 } from '@material-ui/core';
 
 /**
  * textfiled表单，label:提示文本，asyncCheckFlag:用于username表单异步验证特定用途
  * 普通输入表单asyncCheckFlag不设置即可
  */
-export const RenderTextField = ({
+const renderTextField = ({
   input,
   label,
   asyncCheckFlag,
+  mode, // 模式：只读为readOnly
   meta: { touched, error, valid, asyncValidating },
   ...rest
 }) => {
   if (asyncCheckFlag) {
+    // 专为注册异步验证用户名是否重复设计
     return (
       <TextField
         label={label}
         error={!!(touched && error)}
         helperText={touched && error ? error : ' '}
         fullWidth
-        {...rest}
         {...input}
+        {...rest}
         // touched && valid && !asyncValidating 代表正在异步验证
         InputProps={{
+          readOnly: mode === 'readOnly',
           endAdornment: (
             <InputAdornment position="end">
               {asyncValidating ? (
@@ -52,20 +56,12 @@ export const RenderTextField = ({
       label={label}
       error={!!(touched && error)}
       helperText={touched && error ? error : ' '}
+      InputProps={{ readOnly: mode === 'readOnly' }}
       fullWidth
-      {...rest}
       {...input}
+      {...rest}
     />
   );
 };
 
-export const renderSwitch = ({ input, label, ...rest }) => {
-  return (
-    <FormControlLabel
-      control={
-        <Switch {...input} {...rest} value="remember" checked={input.value} />
-      }
-      label={label}
-    />
-  );
-};
+export default renderTextField;

@@ -66,10 +66,11 @@ const configureAxios = dispatch => {
         // content-type 自动设置为application/x-www-form-urlencoded
         config.data = qs.stringify(config.data);
       }
-      const token = localStorage.getItem('token');
-      if (token) {
-        config.headers.Authorization = 'Token ' + token;
-      }
+      // 考虑后还是采用cookie-session的方案吧
+      // const token = localStorage.getItem('token');
+      // if (token) {
+      //   config.headers.Authorization = 'Token ' + token;
+      // }
       return config;
     },
     error => {
