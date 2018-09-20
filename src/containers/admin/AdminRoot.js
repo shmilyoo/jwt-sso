@@ -45,7 +45,7 @@ const style = theme => ({
     marginLeft: 0
   },
   main: {
-    padding: 20,
+    padding: 24,
     flex: 'auto',
     display: 'flex'
   },

@@ -5,11 +5,7 @@ import {
   withStyles,
   Typography,
   TextField,
-  Button,
-  FormControlLabel,
-  Card,
-  CardContent,
-  Paper
+  Button
 } from '@material-ui/core';
 import compose from 'recompose/compose';
 import { actions as commonActions } from '../../reducers/common';
@@ -35,6 +31,7 @@ class Dept extends Component {
     this.state = {
       addNodeText: '', // 添加节点的名称title
       treeNodeSelectedId: '',
+      selectedDept: {},
       treeData: [
         {
           title: 'src/sfdfadsfsafsafdsfsfffffffffff',
@@ -111,9 +108,14 @@ class Dept extends Component {
     });
   render() {
     const { classes } = this.props;
-    const { treeData, addNodeText, treeNodeSelectedId } = this.state;
+    const {
+      treeData,
+      addNodeText,
+      treeNodeSelectedId,
+      selectedDept
+    } = this.state;
     return (
-      <Grid container spacing={40}>
+      <Grid container spacing={24}>
         <Grid item xs={12} sm={5} container direction="column">
           <Grid item>
             <Typography variant="title" align="center">
@@ -152,7 +154,43 @@ class Dept extends Component {
               </Button>
             </Grid>
           </Grid>
-          {treeNodeSelectedId && <Grid item>{treeNodeSelectedId}</Grid>}
+          {treeNodeSelectedId && (
+            <React.Fragment>
+              <Grid item container spacing={16}>
+                <Grid item xs>
+                  <TextField label="部门名称" fullWidth />
+                </Grid>
+                <Grid item xs>
+                  <TextField label="部门名称2" fullWidth />
+                </Grid>
+              </Grid>
+              <Grid item container spacing={16} justify="center">
+                <Grid item>
+                  <Button
+                    variant="raised"
+                    size="medium"
+                    color="secondary"
+                    onClick={this.addNodeTextClick}
+                  >
+                    更新
+                  </Button>
+                </Grid>
+                <Grid item>
+                  <Button
+                    variant="raised"
+                    size="medium"
+                    color="error"
+                    onClick={this.addNodeTextClick}
+                  >
+                    删除
+                  </Button>
+                </Grid>
+              </Grid>
+              <Grid item>222</Grid>
+              <Grid item>333</Grid>
+              <Grid item>111</Grid>
+            </React.Fragment>
+          )}
           <Grid item>333</Grid>
         </Grid>
       </Grid>
