@@ -1,0 +1,15 @@
+.rst__rowContents {
+  min-width: 40px;
+  cursor: pointer;
+}
+.rst__moveHandle {
+  width: 30px;
+}
+/* .rst__nodeContent {
+  height: 20px;
+} */
+.rst__collapseButton,
+.rst__expandButton {
+  width: 16px;
+  height: 16px;
+}

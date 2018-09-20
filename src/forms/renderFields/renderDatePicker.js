@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import DatePicker from 'react-datepicker';
 import moment from 'moment';
 import 'moment/locale/zh-cn';
-import 'react-datepicker/dist/react-datepicker.1.css';
+import '../../assets/css/datePicker.css';
 // import TextField from '@material-ui/core/TextField';
 import { withStyles, TextField } from '@material-ui/core';
 
@@ -43,7 +43,7 @@ class RenderDatePicker extends React.PureComponent {
       // date根据用户初始赋值转换为moment实例或者null，初始值可以为string或者unix时间戳
       // 数据库中统一保存为utc时间戳
       date:
-        initValue === 0 || !!initValue
+        initValue === 0 || !!initValue // unix时间戳的0也是有意义的时间
           ? Number.isInteger(initValue)
             ? moment.unix(initValue)
             : moment(initValue)

@@ -8,13 +8,16 @@ export const types = {
   CLOSE_MESSAGE: 'COMMON/CLOSE_MESSAGE',
   CHANGE_TITLE: 'COMMON/CHANGE_TITLE'
 };
-
 export const actions = {
+  /**
+   * 在右下角显示提示消息
+   */
   showMessage: (message, messageType) => ({
     type: types.SHOW_MESSAGE,
     message,
-    messageType:
-      ['info', 'warn', 'error'].indexOf(messageType) >= 0 ? messageType : 'info'
+    messageType: ['info', 'warn', 'error'].includes(messageType)
+      ? messageType
+      : 'info'
   }),
   closeMessage: () => ({
     type: types.CLOSE_MESSAGE

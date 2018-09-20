@@ -20,6 +20,7 @@ import {
 import LeftNav from '../../components/LeftNav';
 import Info from '../account/Info';
 import { adminLeftMenu } from '../../config';
+import Dept from './Dept';
 
 const drawerWidth = 250;
 
@@ -45,7 +46,8 @@ const style = theme => ({
   },
   main: {
     padding: 20,
-    flex: 'auto'
+    flex: 'auto',
+    display: 'flex'
   },
   white: {
     color: 'white'
@@ -57,12 +59,25 @@ class AdminRoot extends React.Component {
     this.props.dispatch({ type: accountTypes.SAGA_LOGOUT_REQUEST });
   };
 
+  shouldComponentUpdate(nextProps) {
+    return this.props.location !== nextProps.location;
+  }
+
+  componentDidUpdate() {
+    console.log('admin root did update');
+  }
+
   render() {
     console.log('render admin root');
     const { classes, title } = this.props;
     return (
       <div className={classes.homeRoot}>
-        <LeftNav menu={adminLeftMenu} open={true} header="后台管理" />
+        <LeftNav
+          type="admin"
+          menu={adminLeftMenu}
+          open={true}
+          header="后台管理"
+        />
         <div className={classes.right}>
           <div className={classes.header}>
             <AppBar color="secondary" position="static">
@@ -86,7 +101,7 @@ class AdminRoot extends React.Component {
           </div>
           <div className={classes.main}>
             <Switch>
-              <Route path="/admin/dept" component={Info} />
+              <Route path="/admin/organ/dept" component={Dept} />
             </Switch>
           </div>
         </div>

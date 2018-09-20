@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import compose from 'recompose/compose';
 import {
@@ -54,16 +55,27 @@ const style = {
   }
 };
 
-class LeftNav extends React.Component {
+class LeftNav extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      [props.location.pathname.split('/')[1]]: true
+      // 由于普通用户界面和管理员界面的url层次不同，/account/info, /admin/organ/dept
+      // 为便于初始打开页面时左侧导航栏根据path自动展开，需要在mount的时候分析path
+      [props.location.pathname.split('/')[props.type === 'admin' ? 2 : 1]]: true
     };
-    console.log('home left construct');
+    console.log('left nav construct');
   }
+
+  componentDidUpdate() {
+    console.log('left nav did update');
+  }
+
   drawItemClick = url => () => {
     // this.props.dispatch({ type: commonTypes.CHANGE_TITLE, title }); 在各自页面中设置title
+    // console.log(this.props.location.pathname, url);
+    if (this.props.location.pathname === url) {
+      return;
+    }
     history.push(url);
   };
   render() {
@@ -92,7 +104,7 @@ class LeftNav extends React.Component {
                   button
                   className={classnames({
                     [classes.selected]: ele.path === location.pathname
-                  })}
+                  })} // 适用于没有子菜单的元素，也可以被选中
                   onClick={
                     ele.children
                       ? () => {
@@ -154,7 +166,14 @@ class LeftNav extends React.Component {
   }
 }
 
+LeftNav.propTypes = {
+  type: PropTypes.string, // 代表是被哪个页面调用
+  menu: PropTypes.array.isRequired,
+  open: PropTypes.bool.isRequired,
+  header: PropTypes.string.isRequired
+};
+
 export default compose(
-  withStyles(style),
-  withRouter
+  withRouter,
+  withStyles(style)
 )(LeftNav);
