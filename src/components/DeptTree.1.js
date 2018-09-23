@@ -28,7 +28,7 @@ class DeptTree extends React.PureComponent {
       treeData: []
     };
     this.expand = {}; //记录tree的各个节点展开折叠信息
-    console.log('deptTree constrcut 111');
+    console.log('deptTree constrcut');
   }
   componentDidMount() {
     // 获取部门结构，setstate
@@ -80,8 +80,8 @@ class DeptTree extends React.PureComponent {
     const { classes } = this.props;
     const { treeNodeSelectedId, treeData } = this.state;
     return (
-      <Grid container direction="column">
-        <Grid item container justify="center" alignItems="center">
+      <div className={classes.root}>
+        <div className={classes.head}>
           <Typography variant="title" align="center">
             部门架构
           </Typography>
@@ -110,8 +110,8 @@ class DeptTree extends React.PureComponent {
           >
             <ExpandMore className={classes.refreshIcon} />
           </IconButton>
-        </Grid>
-        <Grid item xs>
+        </div>
+        <div className={classes.tree}>
           <Tree
             treeData={treeData}
             selected={treeNodeSelectedId}
@@ -119,8 +119,8 @@ class DeptTree extends React.PureComponent {
             onChange={this.handleTreeChange}
             // onCollapse={this.treeCollapseChange}
           />
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     );
   }
 }

@@ -9,10 +9,6 @@ const Tree = ({ treeData, onChange, selected, onSelected, onCollapse }) => {
     <SortableTree
       treeData={treeData}
       rowHeight={50}
-      // slideRegionSize={100}
-      // scaffoldBlockPxWidth={44}
-      // innerStyle={}  tree的容器区域，可滚动区域
-      // style={{ backgroundColor: '#500' }}
       onChange={onChange}
       onVisibilityToggle={({ node, expanded }) => {
         onCollapse && onCollapse(node.id, expanded);

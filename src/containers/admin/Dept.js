@@ -1,25 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {
-  Grid,
-  withStyles,
-  Typography,
-  TextField,
-  Button,
-  IconButton
-} from '@material-ui/core';
-import Autorenew from '@material-ui/icons/Autorenew';
-import ExpandLess from '@material-ui/icons/ExpandLess';
-import ExpandMore from '@material-ui/icons/ExpandMore';
+import { Grid, withStyles, TextField, Button } from '@material-ui/core';
 import compose from 'recompose/compose';
 import { actions as commonActions } from '../../reducers/common';
-import Tree from '../../components/Tree';
-import {
-  createDept,
-  getDeptArray,
-  makeDeptTree,
-  toogleExpandTreeData
-} from '../../services/utility';
+import { createDept } from '../../services/utility';
+import DeptTree from '../../components/DeptTree';
 
 const style = theme => ({
   root: {
@@ -34,9 +19,7 @@ const style = theme => ({
   },
   delBtn: {
     '&:hover': { backgroundColor: theme.palette.error.light }
-  },
-  refreshBtn: { width: '2.5rem', height: '2.5rem' },
-  refreshIcon: { fontSize: '2rem' }
+  }
 });
 
 class Dept extends Component {
@@ -45,38 +28,18 @@ class Dept extends Component {
     props.dispatch(commonActions.changeTitle('部门架构管理'));
     this.state = {
       addNodeText: '', // 添加节点的名称title
-      treeNodeSelectedId: '',
-      selectedDept: {}, // 显示在右侧表格中的选中部门信息，用于编辑删除等
-      treeData: []
+      selectedDept: {} // 显示在右侧表格中的选中部门信息，用于编辑删除等
     };
-    this.expand = {}; //记录tree的各个节点展开折叠信息
-    console.log('dept constrcut');
-  }
-
-  componentDidMount() {
-    // 获取部门结构，setstate
-    this.refreshTreeData();
+    this.deptTreeRef = React.createRef();
+    console.log('dept constrcut 222');
   }
 
   componentDidUpdate() {
     console.log('dept did update');
   }
 
-  refreshTreeData = () => {
-    console.log('refresh');
-    getDeptArray().then(res => {
-      console.log(res);
-      if (res.success) {
-        const treeData = makeDeptTree(res.data, this.expand);
-        this.setState({ treeData });
-      } else {
-        this.props.dispatch(commonActions.showMessage(res.error, 'error'));
-      }
-    });
-  };
   addNodeTextChange = e => {
     this.setState({ addNodeText: e.target.value.trim() });
-    // this.props.dispatch(commonActions.showMessage(e.target.value));
   };
   addNodeTextClick = () => {
     // 添加根节点或者添加下级节点，如果添加下级节点，必须先选中一个父节点
@@ -96,92 +59,32 @@ class Dept extends Component {
     }
     createDept(addNodeText, intro, parent).then(res => {
       res.success
-        ? this.refreshTreeData()
+        ? this.deptTreeRef.refreshTreeData()
         : this.props.dispatch(
             commonActions.showMessage(response.error, 'error')
           );
       this.setState({ addNodeText: '' });
     });
   };
-  /**
-   * tree的onChange方法，必须
-   */
-  handleTreeChange = treeData => this.setState({ treeData });
-  /**
-   * tree的node 文本被选中后调用的方法，传入node的id属性
-   */
-  treeNodeSelected = id =>
-    this.setState({
-      treeNodeSelectedId: id === this.state.treeNodeSelectedId ? '' : id
-    });
-  treeCollapseChange = (nodeId, expanded) => {
-    this.expand.nodeId = expanded;
-  };
-  toogleExpandAll = expand => {
-    if (expand === this.expand) return;
-    this.expand = expand;
-    this.setState({ treeData: toogleExpandTreeData(this.state.treeData) });
+  deptTreeNodeSelected = id => {
+    this.setState({ treeNodeSelectedId: id });
   };
   render() {
     const { classes } = this.props;
-    const {
-      treeData,
-      addNodeText,
-      treeNodeSelectedId,
-      selectedDept
-    } = this.state;
+    const { addNodeText, treeNodeSelectedId, selectedDept } = this.state;
     return (
       <Grid container spacing={24}>
         <Grid item xs={12} sm={5}>
-          <Grid container direction="column">
-            <Grid item container justify="center" alignItems="center">
-              <Typography variant="title" align="center">
-                部门架构
-              </Typography>
-              <IconButton
-                title="刷新"
-                className={classes.refreshBtn}
-                onClick={this.refreshTreeData}
-              >
-                <Autorenew className={classes.refreshIcon} />
-              </IconButton>
-              <IconButton
-                title="全部折叠"
-                className={classes.refreshBtn}
-                onClick={() => {
-                  this.toogleExpandAll(false);
-                }}
-              >
-                <ExpandLess className={classes.refreshIcon} />
-              </IconButton>
-              <IconButton
-                title="全部展开"
-                className={classes.refreshBtn}
-                onClick={() => {
-                  this.toogleExpandAll(false);
-                }}
-              >
-                <ExpandMore className={classes.refreshIcon} />
-              </IconButton>
-            </Grid>
-            <Grid item xs>
-              <Tree
-                treeData={treeData}
-                selected={treeNodeSelectedId}
-                onSelected={this.treeNodeSelected}
-                onChange={this.handleTreeChange}
-                // onCollapse={this.treeCollapseChange}
-              />
-            </Grid>
-          </Grid>
+          <DeptTree
+            ref={this.deptTreeRef}
+            deptTreeNodeSelected={this.deptTreeNodeSelected}
+          />
         </Grid>
         <Grid item xs={12} sm container spacing={24} direction="column">
           <Grid item container spacing={24} alignItems="flex-end">
             <Grid item>
               <TextField
-                label={
-                  treeData && treeData.length > 0 ? '添加节点' : '添加根节点'
-                }
+                label={treeNodeSelectedId ? '添加子节点' : '添加根节点'}
                 value={this.state.addNodeText}
                 onChange={this.addNodeTextChange}
               />
