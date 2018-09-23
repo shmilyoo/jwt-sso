@@ -43,23 +43,14 @@ class Dept extends Component {
   };
   addNodeTextClick = () => {
     // 添加根节点或者添加下级节点，如果添加下级节点，必须先选中一个父节点
-    const { addNodeText, treeData, treeNodeSelectedId } = this.state;
+    const { addNodeText, treeNodeSelectedId } = this.state;
     let response = null;
     let intro = 'intro';
-    let parent = treeNodeSelectedId;
-    if (treeData && treeData.length > 0) {
-      if (!treeNodeSelectedId) {
-        this.props.dispatch(
-          commonActions.showMessage('必须选择一个父节点', 'warn')
-        );
-        return;
-      }
-    } else {
-      parent = '0';
-    }
+    let parent = treeNodeSelectedId ? treeNodeSelectedId : '0';
     createDept(addNodeText, intro, parent).then(res => {
+      console.log(this.deptTreeRef);
       res.success
-        ? this.deptTreeRef.refreshTreeData()
+        ? this.deptTreeRef.current.refreshTreeData()
         : this.props.dispatch(
             commonActions.showMessage(response.error, 'error')
           );
@@ -67,16 +58,19 @@ class Dept extends Component {
     });
   };
   deptTreeNodeSelected = id => {
-    this.setState({ treeNodeSelectedId: id });
+    this.setState({
+      treeNodeSelectedId: id === this.state.treeNodeSelectedId ? '' : id
+    });
   };
   render() {
+    console.log('dept render');
     const { classes } = this.props;
     const { addNodeText, treeNodeSelectedId, selectedDept } = this.state;
     return (
       <Grid container spacing={24}>
         <Grid item xs={12} sm={5}>
           <DeptTree
-            ref={this.deptTreeRef}
+            innerRef={this.deptTreeRef}
             deptTreeNodeSelected={this.deptTreeNodeSelected}
           />
         </Grid>

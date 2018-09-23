@@ -18,6 +18,8 @@ const Tree = ({ treeData, onChange, selected, onSelected, onCollapse }) => {
         return {
           style: { boxShadow: selected === node.id ? '0 0 0 2px blue' : '' },
           onClick: e => {
+            // console.log(node, path, e.target.className, e);
+            e.stopPropagation();
             if (
               e.target.className == 'rst__collapseButton' ||
               e.target.className == 'rst__expandButton' ||

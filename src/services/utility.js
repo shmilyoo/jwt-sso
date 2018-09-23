@@ -64,18 +64,26 @@ export const createDept = async (name, intro, parentId) => {
  *
  * @param {Array} deptArray 按照level从小到大排列的dept object数组
  * @param {(boolean|Object)} expanded id:bool 对象 设置各个节点是否展开,如果是Boolean则代表全展开或全折叠
- * @return {Array} 符合react-sortable-tree数据格式的数组
+ * @return {Array} [符合react-sortable-tree数据格式的数组,如果是第一次mount后返回的新expands值]
  */
 export const makeDeptTree = (deptArray, expanded) => {
   // [{name,intro,parent,path,level,id,sid},{},{}]
   const result = [];
   const tmp = {};
+  let newExpands = null;
   for (let i = 0; i < deptArray.length; i++) {
     const dept = deptArray[i];
     tmp[dept.id] = { title: dept.name, id: dept.id };
+    // 如果是页面初始mount，则展开第一层级。mount的时候expanded为{}
+    if (JSON.stringify(expanded) === '{}' && dept.level === 1) {
+      tmp[dept.id].expanded = true;
+      newExpands
+        ? (newExpands[dept.id] = true)
+        : (newExpands = { [dept.id]: true });
+    }
     // 如果expanded 为true或者 为Object且对应dept.id的key值为true
     if (expanded && (expanded === true || expanded[dept.id] === true)) {
-      tmp[dept.id] = { title: dept.name, id: dept.id, expanded: true };
+      tmp[dept.id].expanded = true;
     }
     if (dept.parent !== '0') {
       tmp[dept.parent].children
@@ -85,7 +93,7 @@ export const makeDeptTree = (deptArray, expanded) => {
       result.push(tmp[dept.id]);
     }
   }
-  return result;
+  return [result, newExpands];
 };
 
 /**
@@ -100,4 +108,5 @@ export const toogleExpandTreeData = (treeData, expand) => {
       toogleExpandTreeData(treeData[i].children, expand);
     }
   }
+  return treeData;
 };

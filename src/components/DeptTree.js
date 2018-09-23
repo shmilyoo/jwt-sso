@@ -12,23 +12,24 @@ import {
   toogleExpandTreeData
 } from '../services/utility';
 import { actions as commonActions } from '../reducers/common';
+import compose from 'recompose/compose';
 
 const style = {
   refreshBtn: { width: '2.5rem', height: '2.5rem' },
   refreshIcon: { fontSize: '2rem' },
   root: { display: 'flex', flexDirection: 'column', height: '100%' },
   head: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
-  tree: { flex: 'auto', display: 'flex', flexDirection: 'column' }
+  tree: { flex: '1', display: 'flex', flexDirection: 'column' }
 };
-class DeptTree extends React.PureComponent {
+class DeptTree extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       treeNodeSelectedId: '',
       treeData: []
     };
-    this.expand = {}; //记录tree的各个节点展开折叠信息
-    console.log('deptTree constrcut 111');
+    this.expands = {}; //记录tree的各个节点展开折叠信息
+    console.log('deptTree constrcut');
   }
   componentDidMount() {
     // 获取部门结构，setstate
@@ -43,12 +44,23 @@ class DeptTree extends React.PureComponent {
     console.log('dept tree refresh data');
     getDeptArray().then(res => {
       if (res.success) {
-        const treeData = makeDeptTree(res.data, this.expand);
-        this.setState({ treeData });
+        console.log(this.expands);
+        const result = makeDeptTree(res.data, this.expands);
+        this.setState({ treeData: result[0] });
+        if (result[1]) this.expands = result[1];
       } else {
         this.props.dispatch(commonActions.showMessage(res.error, 'error'));
       }
     });
+  };
+  refreshBtnHandle = e => {
+    e.stopPropagation();
+    this.refreshTreeData();
+  };
+
+  rootDivClickHandle = () => {
+    this.state.treeNodeSelectedId &&
+      this.treeNodeSelected(this.state.treeNodeSelectedId);
   };
 
   /**
@@ -67,36 +79,42 @@ class DeptTree extends React.PureComponent {
   };
 
   treeCollapseChange = (nodeId, expanded) => {
-    this.expand.nodeId = expanded;
+    console.log(nodeId, expanded);
+    typeof this.expands === 'boolean'
+      ? (this.expands = { [nodeId]: expanded })
+      : (this.expands[nodeId] = expanded);
   };
 
-  toogleExpandAll = expand => {
-    if (expand === this.expand) return;
-    this.expand = expand;
-    this.setState({ treeData: toogleExpandTreeData(this.state.treeData) });
+  toogleExpandAll = (e, expand) => {
+    e.stopPropagation();
+    if (expand === this.expands) return;
+    this.expands = expand;
+    this.setState({
+      treeData: toogleExpandTreeData(this.state.treeData, expand)
+    });
   };
 
   render() {
     const { classes } = this.props;
     const { treeNodeSelectedId, treeData } = this.state;
     return (
-      <Grid container direction="column">
-        <Grid item container justify="center" alignItems="center">
+      <div className={classes.root} onClick={this.rootDivClickHandle}>
+        <div className={classes.head}>
           <Typography variant="title" align="center">
             部门架构
           </Typography>
           <IconButton
             title="刷新"
             className={classes.refreshBtn}
-            onClick={this.refreshTreeData}
+            onClick={this.refreshBtnHandle}
           >
             <Autorenew className={classes.refreshIcon} />
           </IconButton>
           <IconButton
             title="全部折叠"
             className={classes.refreshBtn}
-            onClick={() => {
-              this.toogleExpandAll(false);
+            onClick={e => {
+              this.toogleExpandAll(e, false);
             }}
           >
             <ExpandLess className={classes.refreshIcon} />
@@ -104,27 +122,29 @@ class DeptTree extends React.PureComponent {
           <IconButton
             title="全部展开"
             className={classes.refreshBtn}
-            onClick={() => {
-              this.toogleExpandAll(false);
+            onClick={e => {
+              this.toogleExpandAll(e, true);
             }}
           >
             <ExpandMore className={classes.refreshIcon} />
           </IconButton>
-        </Grid>
-        <Grid item xs>
+        </div>
+        <div className={classes.tree}>
           <Tree
             treeData={treeData}
             selected={treeNodeSelectedId}
             onSelected={this.treeNodeSelected}
             onChange={this.handleTreeChange}
-            // onCollapse={this.treeCollapseChange}
+            onCollapse={this.treeCollapseChange}
           />
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     );
   }
 }
 
 DeptTree.propTypes = {};
+
+// export default compose(withStyles(style))(DeptTree);
 
 export default withStyles(style)(DeptTree);
