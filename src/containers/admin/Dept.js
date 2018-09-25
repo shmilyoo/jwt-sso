@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Grid, withStyles, TextField, Button } from '@material-ui/core';
+import {
+  Grid,
+  withStyles,
+  TextField,
+  Button,
+  Divider
+} from '@material-ui/core';
 import compose from 'recompose/compose';
 import { actions as commonActions } from '../../reducers/common';
-import { createDept } from '../../services/utility';
+import { addDept } from '../../services/utility';
 import DeptTree from '../../components/DeptTree';
 
 const style = theme => ({
@@ -27,8 +33,11 @@ class Dept extends Component {
     super(props);
     props.dispatch(commonActions.changeTitle('部门架构管理'));
     this.state = {
-      addNodeText: '', // 添加节点的名称title
-      selectedDept: {} // 显示在右侧表格中的选中部门信息，用于编辑删除等
+      addNodeName: '', // 添加节点的名称title
+      addNodeSymbol: '', // 添加节点的简称符号
+      addNodeIntro: '', // 添加节点的介绍
+      selectedDept: {}, // 显示在右侧表格中的选中部门信息，用于编辑删除等
+      test: { name: '' }
     };
     this.deptTreeRef = React.createRef();
     console.log('dept constrcut 222');
@@ -38,22 +47,20 @@ class Dept extends Component {
     console.log('dept did update');
   }
 
-  addNodeTextChange = e => {
-    this.setState({ addNodeText: e.target.value.trim() });
+  addNodeChange = (e, attr) => {
+    this.setState({ [attr]: e.target.value.trim() });
   };
   addNodeTextClick = () => {
     // 添加根节点或者添加下级节点，如果添加下级节点，必须先选中一个父节点
-    const { addNodeText, treeNodeSelectedId } = this.state;
+    const { addNodeName, treeNodeSelectedId } = this.state;
     let response = null;
     let intro = 'intro';
     let parent = treeNodeSelectedId ? treeNodeSelectedId : '0';
-    createDept(addNodeText, intro, parent).then(res => {
+    addDept(addNodeName, intro, parent).then(res => {
       console.log(this.deptTreeRef);
       res.success
         ? this.deptTreeRef.current.refreshTreeData()
-        : this.props.dispatch(
-            commonActions.showMessage(response.error, 'error')
-          );
+        : this.props.dispatch(commonActions.showMessage(res.error, 'error'));
       this.setState({ addNodeText: '' });
     });
   };
@@ -65,7 +72,13 @@ class Dept extends Component {
   render() {
     console.log('dept render');
     const { classes } = this.props;
-    const { addNodeText, treeNodeSelectedId, selectedDept } = this.state;
+    const {
+      addNodeName,
+      addNodeSymbol,
+      addNodeIntro,
+      treeNodeSelectedId,
+      selectedDept
+    } = this.state;
     return (
       <Grid container spacing={24}>
         <Grid item xs={12} sm={5}>
@@ -75,26 +88,52 @@ class Dept extends Component {
           />
         </Grid>
         <Grid item xs={12} sm container spacing={24} direction="column">
-          <Grid item container spacing={24} alignItems="flex-end">
-            <Grid item>
+          <Grid item container spacing={16} alignItems="flex-end">
+            <Grid item xs>
               <TextField
-                label={treeNodeSelectedId ? '添加子节点' : '添加根节点'}
-                value={this.state.addNodeText}
-                onChange={this.addNodeTextChange}
+                label={treeNodeSelectedId ? '节点名称' : '根节点名称'}
+                title="节点的名称，最多32个字符"
+                value={addNodeName}
+                onChange={e => {
+                  this.addNodeChange(e, 'addNodeName');
+                }}
               />
             </Grid>
-            <Grid item>
+            <Grid item xs>
+              <TextField
+                label={treeNodeSelectedId ? '子节点代号' : '根节点代号'}
+                title="节点的字母缩写，最多16个字符"
+                value={addNodeSymbol}
+                onChange={e => {
+                  this.addNodeChange(e, 'addNodeSymbol');
+                }}
+                // onBlur
+              />
+            </Grid>
+            <Grid item xs>
+              <TextField
+                multiline
+                label={treeNodeSelectedId ? '子节点介绍' : '根节点介绍'}
+                title="节点的介绍，最多64个字符"
+                value={addNodeIntro}
+                onChange={e => {
+                  this.addNodeChange(e, 'addNodeIntro');
+                }}
+              />
+            </Grid>
+            <Grid item xs={2}>
               <Button
                 variant="raised"
                 size="medium"
                 color="secondary"
-                disabled={!addNodeText}
+                disabled={!(addNodeName && addNodeSymbol)}
                 onClick={this.addNodeTextClick}
               >
                 添加
               </Button>
             </Grid>
           </Grid>
+          <Divider />
           {treeNodeSelectedId && (
             <React.Fragment>
               <Grid item container spacing={16}>
@@ -111,7 +150,7 @@ class Dept extends Component {
                     variant="raised"
                     size="medium"
                     color="secondary"
-                    onClick={this.addNodeTextClick}
+                    // onClick={this}
                   >
                     更新
                   </Button>
@@ -121,7 +160,7 @@ class Dept extends Component {
                     className={classes.delBtn}
                     variant="raised"
                     size="medium"
-                    onClick={this.addNodeTextClick}
+                    // onClick={this}
                   >
                     删除
                   </Button>

@@ -21,7 +21,7 @@ const style = {
   head: { display: 'flex', alignItems: 'center', justifyContent: 'center' },
   tree: { flex: '1', display: 'flex', flexDirection: 'column' }
 };
-class DeptTree extends React.Component {
+class DeptTree extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

@@ -55,8 +55,8 @@ export const getDeptArray = async () => {
   return response;
 };
 
-export const createDept = async (name, intro, parentId) => {
-  const response = await axios.post('/dept/create', { name, intro, parentId });
+export const addDept = async (name, intro, parentId) => {
+  const response = await axios.post('/dept/add', { name, intro, parentId });
   return response;
 };
 
