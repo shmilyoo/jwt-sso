@@ -2,6 +2,22 @@ import AccountBox from '@material-ui/icons/AccountBox';
 
 const config = {};
 
+const pathTitle = {
+  '/brief/mine': '个人概况',
+  '/brief/department': '部门概况',
+  '/account/info': '资料',
+  '/account/changePasswd': '修改密码',
+  '/account/changePasswd2': '修改密码2',
+  '/account/changePasswd3': '修改密码3',
+  '/admin/organ/dept': '部门管理',
+  '/admin/organ/person': '人员管理',
+  '/admin/interface/api': '接口注册',
+  '/admin/interface/sso': 'sso管理',
+  '/admin/super/addAdmin': '添加管理',
+  '/admin/super/admins': '管理列表',
+  '/admin/about': '关于'
+};
+
 export const sysName = '统一认证系统';
 export const server_base_url_product = '';
 export const server_baseURL_dev = 'http://localhost:7001';
@@ -12,8 +28,8 @@ export const leftMenu = [
     state: 'brief',
     icon: AccountBox,
     children: [
-      { title: '个人概况', path: '/brief/mine' },
-      { title: '部门概况', path: '/brief/department' }
+      { title: pathTitle['/brief/mine'], path: '/brief/mine' },
+      { title: pathTitle['/brief/department'], path: '/brief/department' }
     ]
   },
   {

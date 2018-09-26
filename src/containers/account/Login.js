@@ -32,11 +32,6 @@ class Login extends React.Component {
   };
   render() {
     const { classes, username } = this.props;
-    // 复用LoginForm，普通用户登录和管理员登录
-    const UserLoginForm = reduxForm({
-      form: 'loginForm',
-      initialValues: { username: 'aaa' }
-    })(LoginForm);
     return (
       <div className={classes.container}>
         {username ? (
@@ -47,7 +42,11 @@ class Login extends React.Component {
               <Typography align="center" className={classes.title}>
                 登录
               </Typography>
-              <UserLoginForm onSubmit={this.handleSubmit} />
+              <LoginForm
+                form="loginForm"
+                initialValues={{ username: 'aa' }}
+                onSubmit={this.handleSubmit}
+              />
             </CardContent>
           </Card>
         )}

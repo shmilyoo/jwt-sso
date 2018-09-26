@@ -9,7 +9,7 @@ import Tree from './Tree';
 import {
   makeDeptTree,
   getDeptArray,
-  toogleExpandTreeData
+  toggleExpandTreeData
 } from '../services/utility';
 import { actions as commonActions } from '../reducers/common';
 import compose from 'recompose/compose';
@@ -26,6 +26,7 @@ class DeptTree extends React.PureComponent {
     super(props);
     this.state = {
       treeNodeSelectedId: '',
+      treeNodeSelectedTitle: '',
       treeData: []
     };
     this.expands = {}; //记录tree的各个节点展开折叠信息
@@ -44,12 +45,12 @@ class DeptTree extends React.PureComponent {
     console.log('dept tree refresh data');
     getDeptArray().then(res => {
       if (res.success) {
-        console.log(this.expands);
         const result = makeDeptTree(res.data, this.expands);
         this.setState({ treeData: result[0] });
         if (result[1]) this.expands = result[1];
       } else {
-        this.props.dispatch(commonActions.showMessage(res.error, 'error'));
+        // this.props.dispatch(commonActions.showMessage(res.error, 'error'));
+        console.log(`error is ${res.error}`);
       }
     });
   };
@@ -58,9 +59,11 @@ class DeptTree extends React.PureComponent {
     this.refreshTreeData();
   };
 
+  /**
+   * 点击控件空白处触发的事件，用户撤销选中节点
+   */
   rootDivClickHandle = () => {
-    this.state.treeNodeSelectedId &&
-      this.treeNodeSelected(this.state.treeNodeSelectedId);
+    this.state.treeNodeSelectedId && this.treeNodeUnSelected();
   };
 
   /**
@@ -69,12 +72,26 @@ class DeptTree extends React.PureComponent {
   handleTreeChange = treeData => this.setState({ treeData });
 
   /**
-   * tree的node 文本被选中后调用的方法，传入node的id属性
+   * tree的node 文本被点击后调用的方法，传入node的id title属性
+   * 触发上层组件的选中和撤销选中方法
    */
-  treeNodeSelected = id => {
-    this.props.deptTreeNodeSelected && this.props.deptTreeNodeSelected(id);
+  treeNodeSelected = (id, title) => {
+    // 选中节点，并激活上级组件事件
+    console.log('dept tree selected');
+    this.props.deptTreeNodeSelected &&
+      this.props.deptTreeNodeSelected(id, title);
     this.setState({
-      treeNodeSelectedId: id === this.state.treeNodeSelectedId ? '' : id
+      treeNodeSelectedId: id,
+      treeNodeSelectedTitle: title
+    });
+  };
+  treeNodeUnSelected = () => {
+    // 取消选中节点 ，并激活上级组件事件
+    console.log('dept tree unselected');
+    this.props.deptTreeNodeUnSelected && this.props.deptTreeNodeUnSelected();
+    this.setState({
+      treeNodeSelectedId: '',
+      treeNodeSelectedTitle: ''
     });
   };
 
@@ -85,13 +102,25 @@ class DeptTree extends React.PureComponent {
       : (this.expands[nodeId] = expanded);
   };
 
+  expandAll = e => {
+    this.toogleExpandAll(e, true);
+  };
+  collapseAll = e => {
+    this.toogleExpandAll(e, false);
+  };
+  /**
+   * 全部展开和全部折叠事件处理函数
+   * @param {Event} e event
+   * @param {boolean} expand 全部展开还是折叠
+   */
   toogleExpandAll = (e, expand) => {
     e.stopPropagation();
     if (expand === this.expands) return;
     this.expands = expand;
     this.setState({
-      treeData: toogleExpandTreeData(this.state.treeData, expand)
+      treeData: toggleExpandTreeData(this.state.treeData, expand)
     });
+    this.refreshTreeData();
   };
 
   render() {
@@ -113,18 +142,14 @@ class DeptTree extends React.PureComponent {
           <IconButton
             title="全部折叠"
             className={classes.refreshBtn}
-            onClick={e => {
-              this.toogleExpandAll(e, false);
-            }}
+            onClick={this.collapseAll}
           >
             <ExpandLess className={classes.refreshIcon} />
           </IconButton>
           <IconButton
             title="全部展开"
             className={classes.refreshBtn}
-            onClick={e => {
-              this.toogleExpandAll(e, true);
-            }}
+            onClick={this.expandAll}
           >
             <ExpandMore className={classes.refreshIcon} />
           </IconButton>
@@ -134,6 +159,7 @@ class DeptTree extends React.PureComponent {
             treeData={treeData}
             selected={treeNodeSelectedId}
             onSelected={this.treeNodeSelected}
+            onUnSelected={this.treeNodeUnSelected}
             onChange={this.handleTreeChange}
             onCollapse={this.treeCollapseChange}
           />
@@ -143,8 +169,9 @@ class DeptTree extends React.PureComponent {
   }
 }
 
-DeptTree.propTypes = {};
-
-// export default compose(withStyles(style))(DeptTree);
+DeptTree.propTypes = {
+  deptTreeNodeSelected: PropTypes.func,
+  deptTreeNodeUnSelected: PropTypes.func
+};
 
 export default withStyles(style)(DeptTree);

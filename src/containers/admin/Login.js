@@ -6,6 +6,7 @@ import LoginForm from '../../forms/account/LoginForm';
 import { Card, CardContent, Typography, withStyles } from '@material-ui/core';
 import compose from 'recompose/compose';
 import { actions as accountActions } from '../../reducers/account';
+import { actions as commonActions } from '../../reducers/common';
 const styles = theme => ({
   card: {
     width: '30rem'
@@ -19,17 +20,19 @@ const styles = theme => ({
   title: theme.typography.title3
 });
 class AdminLogin extends React.PureComponent {
+  constructor(props) {
+    super(props);
+    props.dispatch(commonActions.changeTitle('用户资料'));
+  }
+
   handleSubmit = values => {
     return new Promise(resolve => {
       this.props.dispatch(accountActions.adminLogin(resolve, values));
     });
   };
   render() {
+    console.log('admin login render');
     const { classes, username } = this.props;
-    const AdminLoginForm = reduxForm({
-      form: 'adminLoginForm',
-      initialValues: { username: 'aaa', remember: true }
-    })(LoginForm);
     return (
       <div className={classes.container}>
         {username ? (
@@ -40,7 +43,12 @@ class AdminLogin extends React.PureComponent {
               <Typography align="center" className={classes.title}>
                 管理员登录
               </Typography>
-              <AdminLoginForm admin onSubmit={this.handleSubmit} />
+              <LoginForm
+                admin
+                form="adminLoginForm"
+                initialValues={{ username: 'aaa', remember: true }}
+                onSubmit={this.handleSubmit}
+              />
             </CardContent>
           </Card>
         )}

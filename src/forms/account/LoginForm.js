@@ -24,6 +24,7 @@ const styles = () => ({
 });
 const LoginForm = props => {
   const { pristine, submitting, error, classes, admin, handleSubmit } = props;
+  console.log('login form render');
   return (
     <form onSubmit={handleSubmit}>
       <div>{error && <strong>{error}</strong>}</div>
@@ -67,14 +68,7 @@ const LoginForm = props => {
   );
 };
 
-// const enchance = compose(
-//   // withRouter,
-//   withStyles(styles),
-//   reduxForm({
-//     form: 'loginForm',
-//     initialValues: { remember: 'aaa' }
-//   })
-// );
-
-// export default enchance(LoginForm);
-export default withStyles(styles)(LoginForm);
+export default compose(
+  withStyles(styles),
+  reduxForm()
+)(LoginForm);

@@ -24,7 +24,7 @@ const renderTextField = ({
   ...rest
 }) => {
   if (asyncCheckFlag) {
-    // 专为注册异步验证用户名是否重复设计
+    // 专为注册异步验证用户名、部门代号等unique值是否重复设计
     return (
       <TextField
         label={label}

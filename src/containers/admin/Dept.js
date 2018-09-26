@@ -1,16 +1,21 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import {
   Grid,
   withStyles,
   TextField,
   Button,
-  Divider
+  Divider,
+  Typography
 } from '@material-ui/core';
+import axios from 'axios';
 import compose from 'recompose/compose';
+import { reduxForm } from 'redux-form';
 import { actions as commonActions } from '../../reducers/common';
-import { addDept } from '../../services/utility';
+import { addDept, getDeptWithParent } from '../../services/utility';
 import DeptTree from '../../components/DeptTree';
+import DeptForm from '../../forms/admin/DeptForm';
+// import DeptForm from '../../forms/admin/DeptForm';
 
 const style = theme => ({
   root: {
@@ -25,153 +30,151 @@ const style = theme => ({
   },
   delBtn: {
     '&:hover': { backgroundColor: theme.palette.error.light }
+  },
+  modeLink: {
+    paddingLeft: '2rem',
+    cursor: 'pointer',
+    '&:hover': { textDecoration: 'underline' }
   }
 });
 
-class Dept extends Component {
+class Dept extends PureComponent {
   constructor(props) {
     super(props);
-    props.dispatch(commonActions.changeTitle('部门架构管理'));
     this.state = {
-      addNodeName: '', // 添加节点的名称title
-      addNodeSymbol: '', // 添加节点的简称符号
-      addNodeIntro: '', // 添加节点的介绍
-      selectedDept: {}, // 显示在右侧表格中的选中部门信息，用于编辑删除等
-      test: { name: '' }
+      treeNodeSelected: {
+        id: '',
+        title: '',
+        symbol: '',
+        intro: '',
+        parentName: '',
+        parentId: ''
+      },
+      mode: 'viewEdit' // viewEdit 或者 add，浏览编辑模式或者添加模式
     };
     this.deptTreeRef = React.createRef();
     console.log('dept constrcut 222');
   }
+  // shouldComponentUpdate(nextProps, nextState, nextContext) {
+  //   if (nextState.mode !== this.state.mode) return true;
+  //   return true;
+  // }
 
   componentDidUpdate() {
     console.log('dept did update');
   }
+  componentDidMount() {
+    console.log('dept did mount');
+    this.props.dispatch(commonActions.changeTitle('部门架构管理'));
+  }
 
-  addNodeChange = (e, attr) => {
-    this.setState({ [attr]: e.target.value.trim() });
-  };
   addNodeTextClick = () => {
     // 添加根节点或者添加下级节点，如果添加下级节点，必须先选中一个父节点
-    const { addNodeName, treeNodeSelectedId } = this.state;
-    let response = null;
-    let intro = 'intro';
-    let parent = treeNodeSelectedId ? treeNodeSelectedId : '0';
-    addDept(addNodeName, intro, parent).then(res => {
-      console.log(this.deptTreeRef);
-      res.success
-        ? this.deptTreeRef.current.refreshTreeData()
-        : this.props.dispatch(commonActions.showMessage(res.error, 'error'));
-      this.setState({ addNodeText: '' });
+  };
+  deptTreeNodeSelected = (id, title) => {
+    getDeptWithParent(id).then(res => {
+      if (res.success && res.data) {
+        this.setState({
+          treeNodeSelected: {
+            id: res.data.id,
+            title: res.data.name,
+            symbol: res.data.symbol,
+            intro: res.data.intro,
+            parentId: res.data.parent_id,
+            parentName: res.data.parent ? res.data.parent.name : ''
+          }
+        });
+      }
     });
   };
-  deptTreeNodeSelected = id => {
+  deptTreeNodeUnSelected = () => {
     this.setState({
-      treeNodeSelectedId: id === this.state.treeNodeSelectedId ? '' : id
+      treeNodeSelected: {}
     });
+  };
+  changeMode = () => {
+    this.setState({ mode: this.state.mode === 'add' ? 'viewEdit' : 'add' });
+  };
+  handleSubmit = values => {
+    if (this.state.mode === 'add') {
+      const parentId = this.state.treeNodeSelected.id || '0';
+      axios
+        .post('/dept/add', {
+          name: values.name,
+          symbol: values.symbol,
+          intro: values.intro,
+          parentId: parentId
+        })
+        .then(res => {
+          if (res.success) {
+            this.deptTreeRef.current.refreshTreeData();
+            this.props.dispatch({
+              type: '@@redux-form/RESET',
+              meta: {
+                form: 'addDeptForm'
+              }
+            });
+          } else {
+            this.props.dispatch(commonActions.showMessage(res.error, 'error'));
+          }
+        });
+    } else {
+    }
   };
   render() {
     console.log('dept render');
     const { classes } = this.props;
     const {
-      addNodeName,
-      addNodeSymbol,
-      addNodeIntro,
-      treeNodeSelectedId,
-      selectedDept
+      treeNodeSelected: { id, title, symbol, intro, parentName },
+      mode
     } = this.state;
+    console.log(
+      `mode is ${mode}, render dept. treeNodeSelectedTitle is ${title}`
+    );
     return (
       <Grid container spacing={24}>
         <Grid item xs={12} sm={5}>
           <DeptTree
             innerRef={this.deptTreeRef}
             deptTreeNodeSelected={this.deptTreeNodeSelected}
+            deptTreeNodeUnSelected={this.deptTreeNodeUnSelected}
           />
         </Grid>
         <Grid item xs={12} sm container spacing={24} direction="column">
-          <Grid item container spacing={16} alignItems="flex-end">
-            <Grid item xs>
-              <TextField
-                label={treeNodeSelectedId ? '节点名称' : '根节点名称'}
-                title="节点的名称，最多32个字符"
-                value={addNodeName}
-                onChange={e => {
-                  this.addNodeChange(e, 'addNodeName');
-                }}
-              />
-            </Grid>
-            <Grid item xs>
-              <TextField
-                label={treeNodeSelectedId ? '子节点代号' : '根节点代号'}
-                title="节点的字母缩写，最多16个字符"
-                value={addNodeSymbol}
-                onChange={e => {
-                  this.addNodeChange(e, 'addNodeSymbol');
-                }}
-                // onBlur
-              />
-            </Grid>
-            <Grid item xs>
-              <TextField
-                multiline
-                label={treeNodeSelectedId ? '子节点介绍' : '根节点介绍'}
-                title="节点的介绍，最多64个字符"
-                value={addNodeIntro}
-                onChange={e => {
-                  this.addNodeChange(e, 'addNodeIntro');
-                }}
-              />
-            </Grid>
-            <Grid item xs={2}>
-              <Button
-                variant="raised"
-                size="medium"
-                color="secondary"
-                disabled={!(addNodeName && addNodeSymbol)}
-                onClick={this.addNodeTextClick}
-              >
-                添加
-              </Button>
-            </Grid>
+          <Grid item container justify="center" alignItems="flex-end">
+            <Typography variant="title">
+              {mode === 'add' ? '添加节点' : '查看编辑节点'}
+            </Typography>
+            <Typography
+              className={classes.modeLink}
+              variant="button"
+              onClick={this.changeMode}
+            >
+              {mode === 'add' ? '查看编辑节点' : '添加节点'}
+            </Typography>
           </Grid>
-          <Divider />
-          {treeNodeSelectedId && (
-            <React.Fragment>
-              <Grid item container spacing={16}>
-                <Grid item xs>
-                  <TextField label="部门名称" fullWidth />
-                </Grid>
-                <Grid item xs>
-                  <TextField label="部门名称2" fullWidth />
-                </Grid>
-              </Grid>
-              <Grid item container spacing={16} justify="center">
-                <Grid item>
-                  <Button
-                    variant="raised"
-                    size="medium"
-                    color="secondary"
-                    // onClick={this}
-                  >
-                    更新
-                  </Button>
-                </Grid>
-                <Grid item>
-                  <Button
-                    className={classes.delBtn}
-                    variant="raised"
-                    size="medium"
-                    // onClick={this}
-                  >
-                    删除
-                  </Button>
-                </Grid>
-              </Grid>
-              <Grid item>222</Grid>
-              <Grid item>333</Grid>
-              <Grid item>111</Grid>
-            </React.Fragment>
-          )}
-          <Grid item>333</Grid>
+          <Grid item>
+            <Divider />
+          </Grid>
+          <DeptForm
+            key={mode}
+            form={mode === 'add' ? 'addDeptForm' : 'editDeptForm'}
+            enableReinitialize
+            initialValues={
+              mode === 'add'
+                ? {
+                    parent: title ? title : '作为根节点'
+                  }
+                : {
+                    name: title,
+                    symbol: symbol,
+                    intro: intro,
+                    parent: parentName || '根节点'
+                  }
+            }
+            mode={mode}
+            onSubmit={this.handleSubmit}
+          />
         </Grid>
       </Grid>
     );

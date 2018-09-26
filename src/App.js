@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 import { Route, Link, Switch, withRouter } from 'react-router-dom';
 import DeleteIcon from '@material-ui/icons/Delete';

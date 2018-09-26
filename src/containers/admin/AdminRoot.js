@@ -59,9 +59,9 @@ class AdminRoot extends React.Component {
     this.props.dispatch({ type: accountTypes.SAGA_LOGOUT_REQUEST });
   };
 
-  shouldComponentUpdate(nextProps) {
-    return this.props.location !== nextProps.location;
-  }
+  // shouldComponentUpdate(nextProps) {
+  //   return this.props.location !== nextProps.location;
+  // }
 
   componentDidUpdate() {
     console.log('admin root did update');

@@ -29,6 +29,7 @@ const styles = () => ({
 });
 
 const RegForm = props => {
+  console.log('reg form render');
   const { handleSubmit, pristine, reset, classes, submitting, error } = props;
   return (
     <form onSubmit={handleSubmit}>
@@ -87,13 +88,8 @@ const RegForm = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  isLoading: state.account.isLoading
-});
-
 const enchance = compose(
   withStyles(styles),
-  connect(mapStateToProps),
   reduxForm({
     form: 'regForm',
     shouldAsyncValidate,

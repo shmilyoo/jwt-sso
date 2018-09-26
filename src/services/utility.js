@@ -42,10 +42,10 @@ export const formSubmit = (action, dispatch) => values =>
 
 /**
  *
- * @param {string} password 用户原始密码
- * @return 密码的md5值，32位
+ * @param {string|Buffer|Array|Uint8Array} message
+ * @return {string} md5值，32位
  */
-export const md5Passwd = password => md5(password);
+export const md5Passwd = message => md5(message);
 
 /**
  * @return {Array} 获取部门结构列表
@@ -85,10 +85,10 @@ export const makeDeptTree = (deptArray, expanded) => {
     if (expanded && (expanded === true || expanded[dept.id] === true)) {
       tmp[dept.id].expanded = true;
     }
-    if (dept.parent !== '0') {
-      tmp[dept.parent].children
-        ? tmp[dept.parent].children.push(tmp[dept.id])
-        : (tmp[dept.parent].children = [tmp[dept.id]]);
+    if (dept.parent_id !== '0') {
+      tmp[dept.parent_id].children
+        ? tmp[dept.parent_id].children.push(tmp[dept.id])
+        : (tmp[dept.parent_id].children = [tmp[dept.id]]);
     } else {
       result.push(tmp[dept.id]);
     }
@@ -97,16 +97,20 @@ export const makeDeptTree = (deptArray, expanded) => {
 };
 
 /**
- *
+ *  全部展开或者折叠树
  * @param {Object[]} treeData tree的数据结构
  * @param {boolean} expand 是否展开
  */
-export const toogleExpandTreeData = (treeData, expand) => {
+export const toggleExpandTreeData = (treeData, expand) => {
   for (let i = 0; i < treeData.length; i++) {
     if (treeData[i].children) {
       treeData[i].expanded = expand;
-      toogleExpandTreeData(treeData[i].children, expand);
+      toggleExpandTreeData(treeData[i].children, expand);
     }
   }
   return treeData;
+};
+
+export const getDeptWithParent = id => {
+  return axios.get(`/dept/${id}?withParent=1`);
 };

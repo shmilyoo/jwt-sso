@@ -37,6 +37,7 @@ class Reg extends React.Component {
   };
 
   render() {
+    console.log('render reg');
     const { classes, username } = this.props;
     return (
       <div className={classes.container}>
