@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 import axios from 'axios';
 import compose from 'recompose/compose';
-import { reduxForm } from 'redux-form';
+import { reduxForm, reset, initialize } from 'redux-form';
 import { actions as commonActions } from '../../reducers/common';
 import { addDept, getDeptWithParent } from '../../services/utility';
 import DeptTree from '../../components/DeptTree';
@@ -108,17 +108,26 @@ class Dept extends PureComponent {
         .then(res => {
           if (res.success) {
             this.deptTreeRef.current.refreshTreeData();
-            this.props.dispatch({
-              type: '@@redux-form/RESET',
-              meta: {
-                form: 'addDeptForm'
-              }
-            });
+            this.props.dispatch(reset('addDeptForm'));
           } else {
             this.props.dispatch(commonActions.showMessage(res.error, 'error'));
           }
         });
     } else {
+      axios
+        .post('/dept/update', {
+          name: values.name,
+          intro: values.intro,
+          id: this.state.treeNodeSelected.id
+        })
+        .then(res => {
+          if (res.success) {
+            this.deptTreeRef.current.refreshTreeData();
+            this.props.dispatch(initialize('editDeptForm', values));
+          } else {
+            this.props.dispatch(commonActions.showMessage(res.error, 'error'));
+          }
+        });
     }
   };
   render() {
@@ -160,6 +169,7 @@ class Dept extends PureComponent {
             key={mode}
             form={mode === 'add' ? 'addDeptForm' : 'editDeptForm'}
             enableReinitialize
+            keepDirtyOnReinitialize
             initialValues={
               mode === 'add'
                 ? {
@@ -175,6 +185,25 @@ class Dept extends PureComponent {
             mode={mode}
             onSubmit={this.handleSubmit}
           />
+          <Grid item>
+            <Divider />
+          </Grid>
+          <Grid item>
+            <ul>
+              <Typography>Tips:</Typography>
+              <li>
+                <Typography>编辑模式下，选中节点进行编辑</Typography>
+              </li>
+              <li>
+                <Typography>
+                  添加模式下，若不选中节点，则添加节点设置为根节点
+                </Typography>
+              </li>
+              <li>
+                <Typography>节点排序请拖动左侧节点手柄</Typography>
+              </li>
+            </ul>
+          </Grid>
         </Grid>
       </Grid>
     );

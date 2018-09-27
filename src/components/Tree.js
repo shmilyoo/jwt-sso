@@ -53,7 +53,8 @@ Tree.propTypes = {
   onChange: PropTypes.func.isRequired,
   selected: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   onSelected: PropTypes.func,
-  onUnSelected: PropTypes.func
+  onUnSelected: PropTypes.func,
+  onCollapse: PropTypes.func
 };
 
 export default Tree;
