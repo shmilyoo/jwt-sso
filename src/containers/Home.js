@@ -1,24 +1,11 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import compose from 'recompose/compose';
 import classNames from 'classnames';
-import { types as accountTypes } from '../reducers/account';
-import {
-  withStyles,
-  AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
-  Tooltip
-} from '@material-ui/core';
-import {
-  Menu as MenuIcon,
-  Person as UserIcon,
-  PowerSettingsNew as LogoutIcon
-} from '@material-ui/icons';
+import { withStyles } from '@material-ui/core';
 import LeftNav from '../components/LeftNav';
 import Info from './account/Info';
+import AppHead from './AppHead';
 import { sysName, leftMenu } from '../config';
 
 const drawerWidth = 250;
@@ -64,13 +51,12 @@ class Home extends React.Component {
   state = {
     leftOpen: true
   };
-  logout = () => {
-    this.props.dispatch({ type: accountTypes.SAGA_LOGOUT_REQUEST });
+  handleMenuClick = () => {
+    this.setState({ leftOpen: !this.state.leftOpen });
   };
-
   render() {
     console.log('render home');
-    const { classes, title } = this.props;
+    const { classes } = this.props;
     return (
       <div className={classes.homeRoot}>
         <LeftNav menu={leftMenu} open={this.state.leftOpen} header={sysName} />
@@ -79,30 +65,7 @@ class Home extends React.Component {
             [classes.rightShift]: !this.state.leftOpen
           })}
         >
-          <div className={classes.header}>
-            <AppBar color="secondary" position="static">
-              <Toolbar style={{ display: 'flex' }}>
-                <IconButton
-                  onClick={() => {
-                    this.setState({ leftOpen: !this.state.leftOpen });
-                  }}
-                >
-                  <MenuIcon />
-                </IconButton>
-                <Typography style={{ flex: 'auto' }} variant="title">
-                  {title}
-                </Typography>
-                <IconButton>
-                  <UserIcon />
-                </IconButton>
-                <Tooltip title="注销">
-                  <IconButton onClick={this.logout}>
-                    <LogoutIcon />
-                  </IconButton>
-                </Tooltip>
-              </Toolbar>
-            </AppBar>
-          </div>
+          <AppHead type="user" onMenuClick={this.handleMenuClick} />
           <div className={classes.main}>
             <Switch>
               <Route path="/account/info" component={Info} />
@@ -117,14 +80,4 @@ class Home extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
-  return {
-    username: state.account.username,
-    title: state.common.title
-  };
-}
-
-export default compose(
-  withStyles(style),
-  connect(mapStateToProps)
-)(Home);
+export default compose(withStyles(style))(Home);

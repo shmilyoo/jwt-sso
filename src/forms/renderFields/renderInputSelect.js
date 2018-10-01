@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextField, MenuItem } from '@material-ui/core';
 
-const renderInputSelectField = ({
+const RenderInputSelectField = ({
   input,
   label,
   data, //[{label,value},...]
@@ -27,4 +27,4 @@ const renderInputSelectField = ({
   );
 };
 
-export default renderInputSelectField;
+export default RenderInputSelectField;

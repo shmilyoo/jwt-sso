@@ -11,10 +11,10 @@ import {
   asyncCheckDeptSymbol
 } from '../../services/validate';
 import { trim } from '../../services/normalize';
-import { renderTextField } from '../renderFields';
+import { RenderTextField } from '../renderFields';
 import compose from 'recompose/compose';
 
-const styles = () => ({
+const styles = theme => ({
   buttonLine: {
     marginTop: '2rem',
     display: 'flex',
@@ -22,6 +22,9 @@ const styles = () => ({
   },
   buttomText: {
     color: grey[500]
+  },
+  delBtn: {
+    '&:hover': { backgroundColor: theme.palette.error.main }
   }
 });
 
@@ -31,10 +34,10 @@ const DeptForm = props => {
     handleSubmit,
     pristine,
     reset,
-    classes,
     submitting,
-    error,
-    data
+    valid,
+    classes,
+    onDelete
   } = props;
   console.log('dept form render');
   return (
@@ -43,7 +46,7 @@ const DeptForm = props => {
         <Grid item>
           <Field
             name="name"
-            component={renderTextField}
+            component={RenderTextField}
             label="节点名称"
             validate={required}
             normalize={trim}
@@ -53,7 +56,7 @@ const DeptForm = props => {
         <Grid item>
           <Field
             name="symbol"
-            component={renderTextField}
+            component={RenderTextField}
             asyncCheckFlag={mode === 'add'}
             validate={required}
             normalize={trim}
@@ -65,7 +68,7 @@ const DeptForm = props => {
         <Grid item>
           <Field
             name="parent"
-            component={renderTextField}
+            component={RenderTextField}
             disabled
             label="上级节点"
           />
@@ -74,7 +77,7 @@ const DeptForm = props => {
       <Grid item>
         <Field
           name="intro"
-          component={renderTextField}
+          component={RenderTextField}
           normalize={trim}
           label="节点介绍"
           multiline
@@ -102,6 +105,18 @@ const DeptForm = props => {
             重置
           </Button>
         </Grid>
+        {mode === 'viewEdit' && (
+          <Grid item>
+            <Button
+              onClick={onDelete}
+              className={classes.delBtn}
+              variant="flat"
+              disabled={!valid}
+            >
+              删除
+            </Button>
+          </Grid>
+        )}
       </Grid>
     </form>
   );

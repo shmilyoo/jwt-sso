@@ -10,8 +10,7 @@ export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
  * client端启动前加载本地用户token信息，设置相关state
  */
 export const initAuthInfoAtStart = dispatch => {
-  console.log('init start');
-  // 修改为cookie 存储
+  // todo 修改为cookie 存储
   const token = localStorage.getItem('token');
   // decode token， state中dispatch设置username active 等信息，判断过期时间等
   if (token) {
@@ -61,6 +60,23 @@ export const addDept = async (name, intro, parentId) => {
 };
 
 /**
+ * 根据dept list 返回第一级别展开的对象
+ * @param {{id:string,level:number}[]} treeArray tree的按照level order 排列的dept数据array
+ * @return {{string:boolean}} {1stLevel1Id:true,2ndLevel1Id:true...}
+ */
+export const getLevel1ExpandsfromTreeArray = treeArray => {
+  let level1Expands = {};
+  const length = treeArray.length;
+  for (let i = 0; i < length; i++) {
+    if (treeArray[i].level === 1) {
+      level1Expands[treeArray[i].id] = true;
+    }
+    if (treeArray[i].level > 1) break;
+  }
+  return level1Expands;
+};
+
+/**
  *
  * @param {Array} deptArray 按照level从小到大排列的dept object数组
  * @param {(boolean|Object)} expanded id:bool 对象 设置各个节点是否展开,如果是Boolean则代表全展开或全折叠
@@ -70,19 +86,11 @@ export const makeDeptTree = (deptArray, expanded) => {
   // [{name,intro,parent,path,level,id,sid},{},{}]
   const result = [];
   const tmp = {};
-  let newExpands = null;
   for (let i = 0; i < deptArray.length; i++) {
     const dept = deptArray[i];
     tmp[dept.id] = { title: dept.name, id: dept.id };
-    // 如果是页面初始mount，则展开第一层级。mount的时候expanded为{}
-    if (JSON.stringify(expanded) === '{}' && dept.level === 1) {
-      tmp[dept.id].expanded = true;
-      newExpands
-        ? (newExpands[dept.id] = true)
-        : (newExpands = { [dept.id]: true });
-    }
     // 如果expanded 为true或者 为Object且对应dept.id的key值为true
-    if (expanded && (expanded === true || expanded[dept.id] === true)) {
+    if (expanded === true || expanded[dept.id] === true) {
       tmp[dept.id].expanded = true;
     }
     if (dept.parent_id !== '0') {
@@ -93,7 +101,7 @@ export const makeDeptTree = (deptArray, expanded) => {
       result.push(tmp[dept.id]);
     }
   }
-  return [result, newExpands];
+  return result;
 };
 
 /**
@@ -108,7 +116,7 @@ export const toggleExpandTreeData = (treeData, expand) => {
       toggleExpandTreeData(treeData[i].children, expand);
     }
   }
-  return treeData;
+  return [...treeData];
 };
 
 export const getDeptWithParent = id => {

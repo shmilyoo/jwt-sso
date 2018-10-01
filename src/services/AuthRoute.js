@@ -1,9 +1,7 @@
 // 扩展路由，非授权跳转
-import { Route, Redirect, withRouter } from 'react-router-dom';
+import { Route, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import React from 'react';
-import { actions as commonActions } from '../reducers/common';
-import history from '../history';
 
 function mapStateToProps(state) {
   return { username: state.account.username, active: state.account.active };
@@ -11,7 +9,8 @@ function mapStateToProps(state) {
 
 const AuthRoute = props => {
   const { component: Component, username, active, location, ...rest } = props;
-  if (username) {
+  // if (username) {
+  if (true) {
     // if (active === 1 && location.pathname !== '/account/info') {
     //   // 重定向到用户资料设置页;
     //   return <Redirect to="/account/info?type=basic" />;

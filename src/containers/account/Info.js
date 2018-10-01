@@ -6,9 +6,15 @@ import history from '../../history';
 import qs from 'qs';
 import { actions as commonActions } from '../../reducers/common';
 import BasicInfoForm from '../../forms/account/BasicInfoForm';
-import BasicInfoForm1 from '../../forms/account/BasicInfoForm1';
+import RegForm from '../../forms/account/RegForm';
 
-const [tab1, tab2, tab3] = ['basic', 'value1', 'value2'];
+// const [tab1, tab2, tab3, tab4] = ['basic', 'education', 'work', 'family'];
+const tabs = {
+  tab1: { label: '基本资料', value: 'basic', component: BasicInfoForm },
+  tab2: { label: '教育经历', value: 'education', component: RegForm },
+  tab3: { label: '工作经历', value: 'work' },
+  tab4: { label: '家庭关系', value: 'family' }
+};
 
 class Info extends React.Component {
   constructor(props) {
@@ -21,7 +27,8 @@ class Info extends React.Component {
   render() {
     const { location } = this.props;
     const type =
-      qs.parse(location.search, { ignoreQueryPrefix: true }).type || tab1;
+      qs.parse(location.search, { ignoreQueryPrefix: true }).type ||
+      tabs.tab1.value;
     return (
       <div>
         <Tabs
@@ -31,14 +38,15 @@ class Info extends React.Component {
           textColor="primary"
           fullWidth
         >
-          <Tab label="基本" value={tab1} />
-          <Tab label="信息1" value={tab2} />
-          <Tab label="信息2" value={tab3} />
+          <Tab label={tabs.tab1.label} value={tabs.tab1.value} />
+          <Tab label={tabs.tab2.label} value={tabs.tab2.value} />
+          <Tab label={tabs.tab3.label} value={tabs.tab3.value} />
         </Tabs>
         <div style={{ marginTop: '2rem' }}>
-          {type === tab1 && <BasicInfoForm />}
-          {type === tab2 && <BasicInfoForm1 />}
-          {type === tab3 && 33333333333333333333333}
+          {type === tabs.tab1.value && <tabs.tab1.component />}
+          {type === tabs.tab2.value && <tabs.tab2.component />}
+          {type === tabs.tab3.value && 33333333333333333333333}
+          {type === tabs.tab4.value && 33333333333333333333333}
         </div>
       </div>
     );

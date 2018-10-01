@@ -1,35 +1,18 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
-import compose from 'recompose/compose';
-import classNames from 'classnames';
-import { types as accountTypes } from '../../reducers/account';
-import {
-  withStyles,
-  AppBar,
-  Toolbar,
-  Typography,
-  IconButton,
-  Tooltip
-} from '@material-ui/core';
-import {
-  Menu as MenuIcon,
-  Person as UserIcon,
-  PowerSettingsNew as LogoutIcon
-} from '@material-ui/icons';
+import { withStyles } from '@material-ui/core';
 import LeftNav from '../../components/LeftNav';
-import Info from '../account/Info';
 import { adminLeftMenu } from '../../config';
 import Dept from './Dept';
+import AppHead from '../AppHead';
 
 const drawerWidth = 250;
 
-const style = theme => ({
+const style = () => ({
   homeRoot: {
     height: '100%',
     width: '100%'
   },
-
   right: {
     position: 'absolute',
     top: 0,
@@ -54,69 +37,26 @@ const style = theme => ({
   }
 });
 
-class AdminRoot extends React.Component {
-  logout = () => {
-    this.props.dispatch({ type: accountTypes.SAGA_LOGOUT_REQUEST });
-  };
-
-  // shouldComponentUpdate(nextProps) {
-  //   return this.props.location !== nextProps.location;
-  // }
-
-  componentDidUpdate() {
-    console.log('admin root did update');
-  }
-
-  render() {
-    console.log('render admin root');
-    const { classes, title } = this.props;
-    return (
-      <div className={classes.homeRoot}>
-        <LeftNav
-          type="admin"
-          menu={adminLeftMenu}
-          open={true}
-          header="后台管理"
-        />
-        <div className={classes.right}>
-          <div className={classes.header}>
-            <AppBar color="secondary" position="static">
-              <Toolbar style={{ display: 'flex' }}>
-                <IconButton>
-                  <MenuIcon />
-                </IconButton>
-                <Typography style={{ flex: 'auto' }} variant="title">
-                  {title}
-                </Typography>
-                <IconButton>
-                  <UserIcon />
-                </IconButton>
-                <Tooltip title="注销">
-                  <IconButton onClick={this.logout}>
-                    <LogoutIcon />
-                  </IconButton>
-                </Tooltip>
-              </Toolbar>
-            </AppBar>
-          </div>
-          <div className={classes.main}>
-            <Switch>
-              <Route path="/admin/organ/dept" component={Dept} />
-            </Switch>
-          </div>
+const AdminRoot = ({ classes }) => {
+  console.log('render admin root');
+  return (
+    <div className={classes.homeRoot}>
+      <LeftNav
+        type="admin"
+        menu={adminLeftMenu}
+        open={true}
+        header="后台管理"
+      />
+      <div className={classes.right}>
+        <AppHead type="admin" />
+        <div className={classes.main}>
+          <Switch>
+            <Route path="/admin/organ/dept" component={Dept} />
+          </Switch>
         </div>
       </div>
-    );
-  }
-}
-function mapStateToProps(state) {
-  return {
-    adminName: state.account.adminName,
-    title: state.common.title
-  };
-}
+    </div>
+  );
+};
 
-export default compose(
-  withStyles(style),
-  connect(mapStateToProps)
-)(AdminRoot);
+export default withStyles(style)(AdminRoot);

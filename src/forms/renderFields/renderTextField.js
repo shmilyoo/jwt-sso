@@ -1,25 +1,17 @@
 import React from 'react';
 import Check from '@material-ui/icons/Check';
-import Refresh from '@material-ui/icons/Refresh';
 import blue from '@material-ui/core/colors/blue';
-import {
-  FormControlLabel,
-  Switch,
-  CircularProgress,
-  TextField,
-  InputAdornment,
-  MenuItem
-} from '@material-ui/core';
+import { CircularProgress, TextField, InputAdornment } from '@material-ui/core';
 
 /**
  * textfiled表单，label:提示文本，asyncCheckFlag:用于username表单异步验证特定用途
  * 普通输入表单asyncCheckFlag不设置即可
  */
-const renderTextField = ({
+const RenderTextField = ({
   input,
   label,
   asyncCheckFlag,
-  mode, // 模式：只读为readOnly
+  readOnly, // 模式：只读为readOnly
   meta: { touched, error, valid, asyncValidating },
   ...rest
 }) => {
@@ -35,7 +27,7 @@ const renderTextField = ({
         {...rest}
         // touched && valid && !asyncValidating 代表正在异步验证
         InputProps={{
-          readOnly: mode === 'readOnly',
+          readOnly,
           endAdornment: (
             <InputAdornment position="end">
               {asyncValidating ? (
@@ -56,7 +48,7 @@ const renderTextField = ({
       label={label}
       error={!!(touched && error)}
       helperText={touched && error ? error : ' '}
-      InputProps={{ readOnly: mode === 'readOnly' }}
+      InputProps={{ readOnly }}
       fullWidth
       {...input}
       {...rest}
@@ -64,4 +56,4 @@ const renderTextField = ({
   );
 };
 
-export default renderTextField;
+export default RenderTextField;

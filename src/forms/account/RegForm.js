@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { Field, reduxForm } from 'redux-form';
 import Button from '@material-ui/core/Button';
 import compose from 'recompose/compose';
-import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import grey from '@material-ui/core/colors/grey';
 import {
@@ -14,7 +13,7 @@ import {
   checkUsername
 } from '../../services/validate';
 import { trim } from '../../services/normalize';
-import { renderTextField } from '../../forms/renderFields';
+import { RenderTextField } from '../../forms/renderFields';
 import { Typography } from '@material-ui/core';
 
 const styles = () => ({
@@ -37,7 +36,7 @@ const RegForm = props => {
       <div>
         <Field
           name="username"
-          component={renderTextField}
+          component={RenderTextField}
           label="用户名"
           asyncCheckFlag
           validate={[required, checkUsername]}
@@ -47,7 +46,7 @@ const RegForm = props => {
       <div>
         <Field
           name="password1"
-          component={renderTextField}
+          component={RenderTextField}
           type="password"
           validate={required}
           label="密码"
@@ -56,7 +55,7 @@ const RegForm = props => {
       <div>
         <Field
           name="password2"
-          component={renderTextField}
+          component={RenderTextField}
           type="password"
           validate={required}
           label="确认密码"

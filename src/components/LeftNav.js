@@ -14,9 +14,6 @@ import {
   Typography
 } from '@material-ui/core';
 import {
-  Menu as MenuIcon,
-  Person as UserIcon,
-  PowerSettingsNew as LogoutIcon,
   ExpandLess as ExpandLessIcon,
   ExpandMore as ExpandMoreIcon
 } from '@material-ui/icons';
@@ -63,11 +60,6 @@ class LeftNav extends React.PureComponent {
       // 为便于初始打开页面时左侧导航栏根据path自动展开，需要在mount的时候分析path
       [props.location.pathname.split('/')[props.type === 'admin' ? 2 : 1]]: true
     };
-    console.log('left nav construct');
-  }
-
-  componentDidUpdate() {
-    console.log('left nav did update');
   }
 
   drawItemClick = url => () => {
@@ -78,6 +70,7 @@ class LeftNav extends React.PureComponent {
     }
     history.push(url);
   };
+
   render() {
     const { classes, open, location, header, menu } = this.props;
     console.log('home left render');

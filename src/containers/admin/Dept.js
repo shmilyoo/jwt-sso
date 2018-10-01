@@ -3,17 +3,25 @@ import { connect } from 'react-redux';
 import {
   Grid,
   withStyles,
-  TextField,
-  Button,
   Divider,
-  Typography
+  Typography,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button
 } from '@material-ui/core';
 import axios from 'axios';
 import compose from 'recompose/compose';
-import { reduxForm, reset, initialize } from 'redux-form';
+import { reset, initialize } from 'redux-form';
 import { actions as commonActions } from '../../reducers/common';
-import { addDept, getDeptWithParent } from '../../services/utility';
-import DeptTree from '../../components/DeptTree';
+import {
+  getDeptWithParent,
+  getDeptArray,
+  makeDeptTree,
+  getLevel1ExpandsfromTreeArray
+} from '../../services/utility';
+import Tree from '../../components/Tree';
 import DeptForm from '../../forms/admin/DeptForm';
 // import DeptForm from '../../forms/admin/DeptForm';
 
@@ -28,9 +36,6 @@ const style = theme => ({
     backgroundColor: '#888',
     flex: 'auto'
   },
-  delBtn: {
-    '&:hover': { backgroundColor: theme.palette.error.light }
-  },
   modeLink: {
     paddingLeft: '2rem',
     cursor: 'pointer',
@@ -42,6 +47,8 @@ class Dept extends PureComponent {
   constructor(props) {
     super(props);
     this.state = {
+      treeDataList: [], // 按照level和order排序的节点数组，非树形数据
+      treeData: [],
       treeNodeSelected: {
         id: '',
         title: '',
@@ -50,28 +57,105 @@ class Dept extends PureComponent {
         parentName: '',
         parentId: ''
       },
-      mode: 'viewEdit' // viewEdit 或者 add，浏览编辑模式或者添加模式
+      mode: 'viewEdit', // viewEdit 或者 add，浏览编辑模式或者添加模式
+      confirmDeleteDialogOpen: false,
+      deleteDeptIdList: [],
+      dialogContent: ''
     };
+    this.expands = {};
     this.deptTreeRef = React.createRef();
-    console.log('dept constrcut 222');
   }
-  // shouldComponentUpdate(nextProps, nextState, nextContext) {
-  //   if (nextState.mode !== this.state.mode) return true;
-  //   return true;
-  // }
 
-  componentDidUpdate() {
-    console.log('dept did update');
-  }
   componentDidMount() {
-    console.log('dept did mount');
-    this.props.dispatch(commonActions.changeTitle('部门架构管理'));
+    this.refreshDeptTreeData(true);
   }
 
-  addNodeTextClick = () => {
-    // 添加根节点或者添加下级节点，如果添加下级节点，必须先选中一个父节点
+  handleTreeDataChange = treeData => {
+    this.setState({ treeData: treeData });
   };
-  deptTreeNodeSelected = (id, title) => {
+
+  /**
+   * 根据state中的dept list和expands计算出树形数据，只有本地计算
+   */
+  makeDeptTreeData = () => {
+    const result = makeDeptTree(this.state.treeDataList, this.expands);
+    this.setState({ treeData: result });
+  };
+
+  /**
+   * 从后台重新获取dept数据，并计算出树形数据
+   * @param {boolean} isMount 是否第一次加载，用来将level1设置为展开
+   */
+  refreshDeptTreeData = (isMount = false) => {
+    getDeptArray().then(res => {
+      if (res.success) {
+        // 将原始队列数据保存在本地，以便之后计算
+        if (isMount) {
+          let level1Expands = getLevel1ExpandsfromTreeArray(res.data);
+          this.expands = level1Expands;
+        }
+        const result = makeDeptTree(res.data, this.expands);
+        this.setState({ treeDataList: res.data, treeData: result });
+      }
+    });
+  };
+
+  handleConfirmDeleteDialogClose = () => {
+    this.setState({ confirmDeleteDialogOpen: false, deleteDeptIdList: [] });
+  };
+
+  handleConfirmDeleteDialogOk = () => {
+    axios
+      .post('/dept/delete', { idList: this.state.deleteDeptIdList })
+      .then(res => {
+        if (res.success) {
+          const tryToDelNum = this.state.deleteDeptIdList.length;
+          if (res.data !== tryToDelNum) {
+            this.props.dispatch(
+              commonActions.showMessage(
+                `尝试删除${tryToDelNum}个，实际删除${res.data}个`,
+                'warn'
+              )
+            );
+          }
+          this.refreshDeptTreeData();
+        }
+        this.handleConfirmDeleteDialogClose();
+      });
+  };
+
+  handleDelDept = () => {
+    const id = this.state.treeNodeSelected.id;
+    if (!id) return;
+    axios.get(`/dept/${id}?withOffspring=1`).then(res => {
+      if (res.success) {
+        const depts = res.data;
+        if (depts.length === 0) return;
+        if (depts.length >= 1) {
+          this.setState({
+            deleteDeptIdList: depts.map(v => v.id),
+            confirmDeleteDialogOpen: true,
+            dialogContent: `${depts.map(v => v.name).join(',')}`
+          });
+        }
+      }
+    });
+  };
+
+  handleVisibilityToggle = ({ node: { id: nodeId }, expanded }) => {
+    typeof this.expands === 'boolean'
+      ? (this.expands = { [nodeId]: expanded })
+      : (this.expands = { ...this.expands, [nodeId]: expanded });
+  };
+
+  handleExpandCollapseAll = expand => {
+    if (this.expands === expand) return;
+    this.expands = expand;
+    const result = makeDeptTree(this.state.treeDataList, this.expands);
+    this.setState({ treeData: result });
+  };
+
+  handleTreeNodeSelected = id => {
     getDeptWithParent(id).then(res => {
       if (res.success && res.data) {
         this.setState({
@@ -87,11 +171,67 @@ class Dept extends PureComponent {
       }
     });
   };
-  deptTreeNodeUnSelected = () => {
+  handleTreeNodeUnSelected = () => {
     this.setState({
       treeNodeSelected: {}
     });
   };
+
+  compareTreePath = (a1, a2) => {
+    if (a1.length !== a2.length) return false;
+    for (let i = 0; i < a1.length; i++) {
+      if (a1[i] !== a2[i]) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  handleTreeNodeMove = ({
+    nextParentNode,
+    node,
+    treeData,
+    prevPath,
+    nextPath,
+    prevTreeIndex,
+    nextTreeIndex
+  }) => {
+    console.log('node ' + JSON.stringify(node));
+    console.log('nextParentNode ' + JSON.stringify(nextParentNode));
+    // console.log(prevPath);
+    // console.log(nextPath);
+    // let noChange = true;
+
+    if (
+      prevTreeIndex === nextTreeIndex &&
+      this.compareTreePath(prevPath, nextPath)
+    ) {
+      console.log('没有变化');
+      return;
+    }
+    let parentId, compeer;
+    if (nextParentNode) {
+      // 移动到非根节点
+      parentId = nextParentNode.id;
+      compeer = nextParentNode.children
+        ? nextParentNode.children.map(node => node.id)
+        : [];
+    } else {
+      // 移动到根节点
+      parentId = '0';
+      compeer = treeData.map(node => node.id);
+    }
+    axios
+      .post('/dept/move', {
+        id: node.id,
+        parentId: parentId,
+        compeer: compeer
+      })
+      .then(res => {
+        console.log('dept move success');
+      });
+  };
+
   changeMode = () => {
     this.setState({ mode: this.state.mode === 'add' ? 'viewEdit' : 'add' });
   };
@@ -106,12 +246,13 @@ class Dept extends PureComponent {
           parentId: parentId
         })
         .then(res => {
+          console.log('add dept res');
           if (res.success) {
-            this.deptTreeRef.current.refreshTreeData();
+            console.log('add dept succ');
+            this.refreshDeptTreeData();
             this.props.dispatch(reset('addDeptForm'));
-          } else {
-            this.props.dispatch(commonActions.showMessage(res.error, 'error'));
           }
+          console.log('add dept res end ', res.success);
         });
     } else {
       axios
@@ -122,10 +263,8 @@ class Dept extends PureComponent {
         })
         .then(res => {
           if (res.success) {
-            this.deptTreeRef.current.refreshTreeData();
+            this.refreshDeptTreeData();
             this.props.dispatch(initialize('editDeptForm', values));
-          } else {
-            this.props.dispatch(commonActions.showMessage(res.error, 'error'));
           }
         });
     }
@@ -134,19 +273,25 @@ class Dept extends PureComponent {
     console.log('dept render');
     const { classes } = this.props;
     const {
-      treeNodeSelected: { id, title, symbol, intro, parentName },
-      mode
+      treeNodeSelected: { title, symbol, intro, parentName },
+      mode,
+      treeData,
+      dialogContent,
+      confirmDeleteDialogOpen
     } = this.state;
-    console.log(
-      `mode is ${mode}, render dept. treeNodeSelectedTitle is ${title}`
-    );
     return (
       <Grid container spacing={24}>
         <Grid item xs={12} sm={5}>
-          <DeptTree
-            innerRef={this.deptTreeRef}
-            deptTreeNodeSelected={this.deptTreeNodeSelected}
-            deptTreeNodeUnSelected={this.deptTreeNodeUnSelected}
+          <Tree
+            title="部门架构"
+            treeData={treeData}
+            onChange={this.handleTreeDataChange}
+            onVisibilityToggle={this.handleVisibilityToggle}
+            onExpandCollapseAll={this.handleExpandCollapseAll}
+            onRefreshData={this.refreshDeptTreeData}
+            onTreeNodeSelected={this.handleTreeNodeSelected}
+            onTreeNodeUnSelected={this.handleTreeNodeUnSelected}
+            onMoveNode={this.handleTreeNodeMove}
           />
         </Grid>
         <Grid item xs={12} sm container spacing={24} direction="column">
@@ -168,6 +313,7 @@ class Dept extends PureComponent {
           <DeptForm
             key={mode}
             form={mode === 'add' ? 'addDeptForm' : 'editDeptForm'}
+            onDelete={this.handleDelDept}
             enableReinitialize
             keepDirtyOnReinitialize
             initialValues={
@@ -205,12 +351,37 @@ class Dept extends PureComponent {
             </ul>
           </Grid>
         </Grid>
+        <Dialog open={confirmDeleteDialogOpen} disableBackdropClick>
+          <DialogTitle>是否确认删除</DialogTitle>
+          <DialogContent>
+            <Typography>
+              本次删除的部门节点包括（
+              <strong>{dialogContent}</strong>
+              ）,请确保所有节点下没有用户等其他关联内容！
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="raised"
+              color="primary"
+              onClick={this.handleConfirmDeleteDialogOk}
+            >
+              确认
+            </Button>
+            <Button
+              variant="flat"
+              onClick={this.handleConfirmDeleteDialogClose}
+            >
+              取消
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Grid>
     );
   }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps() {
   return {};
 }
 export default compose(

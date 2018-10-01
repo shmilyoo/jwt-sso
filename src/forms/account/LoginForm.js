@@ -6,7 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { required } from '../../services/validate';
 import { trim } from '../../services/normalize';
 import { Button, Typography } from '@material-ui/core';
-import { renderTextField, renderSwitch } from '../../forms/renderFields';
+import { RenderTextField, RenderSwitch } from '../../forms/renderFields';
 import grey from '@material-ui/core/colors/grey';
 
 const styles = () => ({
@@ -32,7 +32,7 @@ const LoginForm = props => {
         <Field
           name="username"
           autoFocus
-          component={renderTextField}
+          component={RenderTextField}
           label="用户名"
           normalize={trim}
           validate={required}
@@ -41,7 +41,7 @@ const LoginForm = props => {
       <div>
         <Field
           name="password"
-          component={renderTextField}
+          component={RenderTextField}
           type="password"
           label="密码"
           validate={required}
@@ -56,7 +56,7 @@ const LoginForm = props => {
         >
           登录
         </Button>
-        <Field name="remember" component={renderSwitch} label="记住我" />
+        <Field name="remember" component={RenderSwitch} label="记住我" />
       </div>
       <Typography align="right" className={classes.buttomText}>
         没有账户,

@@ -1,10 +1,9 @@
 import { fork, take, put, call } from 'redux-saga/effects';
-import { SubmissionError, stopSubmit, stopAsyncValidation } from 'redux-form';
-import { sleep, md5Passwd } from '../services/utility';
+import { stopSubmit } from 'redux-form';
+import { md5Passwd } from '../services/utility';
 import { types as accountTypes } from '../reducers/account';
 import { actions as accountActions } from '../reducers/account';
 import { types as commonTypes } from '../reducers/common';
-import { actions as commonActions } from '../reducers/common';
 import axios from 'axios';
 import history from '../history';
 
@@ -23,7 +22,6 @@ function* regFlow() {
       yield call(history.push, '/login');
     } else {
       yield put(stopSubmit('regForm', { _error: response.error }));
-      yield put(commonActions.showMessage(response.error));
     }
     yield put({ type: commonTypes.STOP_LOADING });
   }
@@ -32,10 +30,10 @@ function* regFlow() {
 function* loginFlow() {
   let isLogin = !!localStorage.getItem('token');
   while (true) {
+    // todo 修改登录流程，改为cookies方式
     console.log('login flow start');
     if (!isLogin) {
       // 如果页面是未登录状态
-      console.log('页面是未登录状态');
       let { resolve, values, from } = yield take(
         accountTypes.SAGA_LOGIN_REQUEST
       );
@@ -54,7 +52,6 @@ function* loginFlow() {
       } else {
         isLogin = false;
         yield put(stopSubmit('loginForm', { _error: response.error }));
-        yield put(commonActions.showMessage(response.error, 'error'));
       }
     }
     if (isLogin) {
@@ -88,9 +85,7 @@ function* checkUsernameFlow() {
         yield call(resolve);
       }
     } else {
-      console.log('fsfsdfsdfd1221');
       yield call(reject, { username: ' ' }); // 空格用于保持textField的error提示行高度
-      yield put(commonActions.showMessage(response.error, 'error'));
     }
   }
 }

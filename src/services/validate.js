@@ -1,8 +1,5 @@
-import { sleep } from './utility';
 import axios from 'axios';
 import { types as accountTypes } from '../reducers/account';
-import { actions as accountActions } from '../reducers/account';
-import { actions as commonActions } from '../reducers/common';
 
 export const required = value => {
   // console.log(`check required =${value}=`);
@@ -67,16 +64,18 @@ export const syncCheckDeptForm = values => {
  * 服务端验证dept的symbol是否冲突
  * @param {{symbol:string}} values 包含symbol的对象
  */
-export const asyncCheckDeptSymbol = (values, dispatch) => {
-  return axios.get(`/dept/check-symbol/${values.symbol}`).then(res => {
-    if (res.success) {
-      if (res.data) {
-        throw { symbol: '代号已存在' };
+export const asyncCheckDeptSymbol = values => {
+  return new Promise((resolve, reject) => {
+    axios.get(`/dept/check-symbol/${values.symbol}`).then(res => {
+      if (res.success) {
+        if (res.data) {
+          reject({ symbol: '代号已存在' });
+        }
+        resolve();
+      } else {
+        reject({ symbol: ' ' });
       }
-    } else {
-      dispatch(commonActions.showMessage(res.error, 'error'));
-      throw { symbol: ' ' };
-    }
+    });
   });
 };
 

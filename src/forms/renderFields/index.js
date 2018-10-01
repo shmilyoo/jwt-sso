@@ -1,6 +1,13 @@
-import renderInputSelect from './renderInputSelect';
-import renderSwitch from './renderSwitch';
-import renderTextField from './renderTextField';
+import RenderInputSelect from './renderInputSelect';
+import RenderSwitch from './renderSwitch';
+import RenderTextField from './renderTextField';
 import RenderDatePicker from './renderDatePicker';
+import RenderSelectDeptField from './renderSelectDeptField';
 
-export { renderInputSelect, renderSwitch, renderTextField, RenderDatePicker };
+export {
+  RenderInputSelect,
+  RenderSwitch,
+  RenderTextField,
+  RenderDatePicker,
+  RenderSelectDeptField
+};

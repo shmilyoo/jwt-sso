@@ -41,7 +41,7 @@ class RenderDatePicker extends React.PureComponent {
     let initValue = props.input.value;
     this.state = {
       // date根据用户初始赋值转换为moment实例或者null，初始值可以为string或者unix时间戳
-      // 数据库中统一保存为utc时间戳
+      // 数据库中统一保存为unix时间戳
       date:
         initValue === 0 || !!initValue // unix时间戳的0也是有意义的时间
           ? Number.isInteger(initValue)

@@ -1,13 +1,9 @@
 // @flow
 import React from 'react';
-import { Redirect, Link, withRouter } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
-import axios from 'axios';
 import RegForm from '../../forms/account/RegForm';
-import { SubmissionError } from 'redux-form';
-import { sleep } from '../../services/utility';
 import { types as accountTypes } from '../../reducers/account';
-import { actions as accountActions } from '../../reducers/account';
 import { Card, withStyles, CardContent, Typography } from '@material-ui/core';
 import compose from 'recompose/compose';
 
