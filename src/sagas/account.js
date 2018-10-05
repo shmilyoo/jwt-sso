@@ -39,13 +39,14 @@ function* loginFlow() {
       );
       const username = values.username.toLowerCase();
       const password = md5Passwd(values.password);
+      const remember = values.remember || false;
       const response = yield axios.post('account/login', {
         username,
-        password
+        password,
+        remember
       });
       if (response.success) {
         yield call(resolve);
-        localStorage.setItem('token', response.data.token);
         yield put(accountActions.loginSuccess(username, response.data.active));
         isLogin = true;
         yield call(history.push, from.pathname); // 根据url的redirect进行跳转
@@ -95,9 +96,9 @@ function* checkUsernameFlow() {
  */
 function* getUserInfoFlow() {
   while (true) {
-    const { username } = yield take(accountTypes.SAGA_GET_USER_INFO);
+    yield take(accountTypes.SAGA_GET_USER_AUTH_INFO);
     // url中有username，header中有auth token，服务端综合判定
-    const response = yield axios.get(`account/info/${username}`);
+    const response = yield axios.get('/account/auth');
     console.log(response);
     console.log('测试 强制判断localstorage token信息和远端不一致');
     // yield put({ type: accountTypes.SAGA_FORCE_LOGOUT });
@@ -105,9 +106,20 @@ function* getUserInfoFlow() {
   }
 }
 
+function* getBasicInfoFlow() {
+  while (true) {
+    yield take(accountTypes.SAGA_GET_USER_BASIC_INFO);
+    const response = yield axios.get('/account/info/basic');
+    if (response.success) {
+      yield put(accountActions.setBasicInfo(response.data));
+    }
+  }
+}
+
 export default [
   fork(checkUsernameFlow),
   fork(regFlow),
   fork(getUserInfoFlow),
-  fork(loginFlow)
+  fork(loginFlow),
+  fork(getBasicInfoFlow)
 ];

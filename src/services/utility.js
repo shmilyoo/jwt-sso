@@ -1,8 +1,9 @@
 // 一些辅助函数
-import { types as accountType } from '../reducers/account';
+import { actions as accountActions } from '../reducers/account';
 import jwtDecode from 'jwt-decode';
 import md5 from 'md5';
 import axios from 'axios';
+import Cookie from 'js-cookie';
 
 export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -11,23 +12,13 @@ export const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
  */
 export const initAuthInfoAtStart = dispatch => {
   // todo 修改为cookie 存储
-  const token = localStorage.getItem('token');
   // decode token， state中dispatch设置username active 等信息，判断过期时间等
-  if (token) {
-    const decoded = jwtDecode(token);
-    if (decoded && decoded.username) {
-      dispatch({
-        type: accountType.AUTH_INFO,
-        username: decoded.username,
-        active: decoded.active || 1
-      });
-      // 改为cookie session方案，不再做检查了
-      // 如果本地保存有用户信息，则从服务器获取用户实时相关信息，避免本地信息过期或被篡改
-      // dispatch({
-      //   type: accountType.SAGA_GET_USER_INFO,
-      //   username: decoded.username
-      // });
-    }
+  const username = Cookie.get('user');
+  const active = Number.parseInt(Cookie.get('active'));
+  if (username && active) {
+    dispatch(accountActions.userAuth(username, active));
+    // 如果本地保存有用户信息，则从服务器获取用户实时相关信息，避免本地信息过期或被篡改
+    dispatch(accountActions.getUserAuthInfo());
   }
 };
 

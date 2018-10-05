@@ -4,7 +4,9 @@ export const types = {
   ADMIN_LOGIN_SUCCESS: 'ACCOUNT/ADMIN_LOGIN_SUCCESS',
   ADMIN_LOGOUT_SUCCESS: 'ACCOUNT/ADMIN_LOGOUT_SUCCESS',
   AUTH_INFO: 'ACCOUNT/AUTH_INFO',
-  SAGA_GET_USER_INFO: 'ACCOUNT/SAGA_GET_USER_INFO',
+  SET_USER_BASIC_INFO: 'ACCOUNT/SET_USER_BASIC_INFO',
+  SAGA_GET_USER_AUTH_INFO: 'ACCOUNT/SAGA_GET_USER_AUTH_INFO',
+  SAGA_GET_USER_BASIC_INFO: 'ACCOUNT/SAGA_GET_USER_BASIC_INFO',
   SAGA_REG_REQUEST: 'ACCOUNT/SAGA_REG_REQUEST',
   SAGA_LOGIN_REQUEST: 'ACCOUNT/SAGA_LOGIN_REQUEST',
   SAGA_LOGOUT_REQUEST: 'ACCOUNT/SAGA_LOGOUT_REQUEST',
@@ -25,6 +27,11 @@ export const actions = {
     adminName,
     isSuperAdmin
   }),
+  userAuth: (username, active) => ({
+    type: types.AUTH_INFO,
+    username,
+    active
+  }),
   userLogin: (resolve, values, from) => ({
     type: types.SAGA_LOGIN_REQUEST,
     resolve,
@@ -36,17 +43,23 @@ export const actions = {
     username,
     active
   }),
-  logoutSuccess: () => {
-    // remove cookie
-    return { type: types.LOGOUT_SUCCESS };
-  }
+  logoutSuccess: () => ({ type: types.LOGOUT_SUCCESS }),
+  getBasicInfo: () => ({ type: types.SAGA_GET_USER_BASIC_INFO }),
+  setBasicInfo: data => ({ type: types.SET_USER_BASIC_INFO, data }),
+  /**
+   * 在用户刷新网页，第一次加载时，如果本地cookie有用户信息，则增加一次远程验证
+   */
+  getUserAuthInfo: () => ({ type: types.SAGA_GET_USER_AUTH_INFO })
 };
 
 const initState = {
   username: '',
   active: 2,
   adminName: '',
-  isSuperAdmin: false
+  isSuperAdmin: false,
+  info: {
+    basic: null
+  }
 };
 
 export default function accountReducer(state = initState, action) {
@@ -81,6 +94,14 @@ export default function accountReducer(state = initState, action) {
         ...state,
         adminName: '',
         isSuperAdmin: false
+      };
+    case types.SET_USER_BASIC_INFO:
+      return {
+        ...state,
+        info: {
+          ...state.info,
+          basic: action.data
+        }
       };
     default:
       return state;

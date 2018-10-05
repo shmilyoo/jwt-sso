@@ -12,11 +12,18 @@ export const formatSex = value => {
 
 export const parseSex = value => {
   if (value === 'male') return 1;
-  else if (value === 'female') return 2;
-  else throw 'sex only male or female';
+  else return 2;
 };
 
-export const formatUnixTsToDateOnly = value =>
-  moment.unix(value).format('YYYY-MM-DD');
+export const formatUnixTsToMoment = ts => {
+  console.log('formatUnixTsToMoment ', ts, '----');
+  return Number.isInteger(ts) ? moment.unix(ts) : null;
+};
 
-export const formatDateOnlyToUnixTs = value => moment(value).unix();
+/**
+ * @param {moment} m a moment instance
+ * @return unix timestamp
+ */
+export const parseMomentToUnixTs = m => {
+  return moment(m).unix();
+};

@@ -9,8 +9,7 @@ function mapStateToProps(state) {
 
 const AuthRoute = props => {
   const { component: Component, username, active, location, ...rest } = props;
-  // if (username) {
-  if (true) {
+  if (username) {
     // if (active === 1 && location.pathname !== '/account/info') {
     //   // 重定向到用户资料设置页;
     //   return <Redirect to="/account/info?type=basic" />;

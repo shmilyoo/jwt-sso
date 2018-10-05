@@ -5,12 +5,13 @@ import Tab from '@material-ui/core/Tab';
 import history from '../../history';
 import qs from 'qs';
 import { actions as commonActions } from '../../reducers/common';
+import InfoBasic from './InfoBasic';
 import BasicInfoForm from '../../forms/account/BasicInfoForm';
 import RegForm from '../../forms/account/RegForm';
 
 // const [tab1, tab2, tab3, tab4] = ['basic', 'education', 'work', 'family'];
 const tabs = {
-  tab1: { label: '基本资料', value: 'basic', component: BasicInfoForm },
+  tab1: { label: '基本资料', value: 'basic', component: InfoBasic },
   tab2: { label: '教育经历', value: 'education', component: RegForm },
   tab3: { label: '工作经历', value: 'work' },
   tab4: { label: '家庭关系', value: 'family' }

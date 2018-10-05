@@ -43,7 +43,7 @@ class Login extends React.Component {
               </Typography>
               <LoginForm
                 form="loginForm"
-                initialValues={{ username: 'aa' }}
+                initialValues={{ username: 'aa', remember: false }}
                 onSubmit={this.handleSubmit}
               />
             </CardContent>

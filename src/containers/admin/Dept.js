@@ -48,6 +48,7 @@ class Dept extends PureComponent {
     super(props);
     this.state = {
       treeDataList: [], // 按照level和order排序的节点数组，非树形数据
+      treeDataDic: null, // {id:node,id2:node2,...} 用于选择node时获取节点和父节点信息
       treeData: [],
       treeNodeSelected: {
         id: '',
@@ -95,7 +96,11 @@ class Dept extends PureComponent {
           this.expands = level1Expands;
         }
         const result = makeDeptTree(res.data, this.expands);
-        this.setState({ treeDataList: res.data, treeData: result });
+        this.setState({
+          treeDataList: res.data,
+          treeData: result,
+          treeDataDic: null
+        });
       }
     });
   };
@@ -155,22 +160,42 @@ class Dept extends PureComponent {
     this.setState({ treeData: result });
   };
 
+  /**
+   * 根据state.treeDataDic获取选中节点信息和父节点信息。
+   * treeDataDic若为空，从treeDataList计算得出
+   */
   handleTreeNodeSelected = id => {
-    getDeptWithParent(id).then(res => {
-      if (res.success && res.data) {
-        this.setState({
-          treeNodeSelected: {
-            id: res.data.id,
-            title: res.data.name,
-            symbol: res.data.symbol,
-            intro: res.data.intro,
-            parentId: res.data.parent_id,
-            parentName: res.data.parent ? res.data.parent.name : ''
-          }
-        });
+    let node = null;
+    let parentName = '';
+    if (!this.state.treeDataDic) {
+      console.log('treeDataDic为空，重新计算');
+      let treeDataDic = {};
+      this.state.treeDataList.forEach(node => {
+        treeDataDic[node.id] = node;
+      });
+      node = treeDataDic[id];
+      parentName =
+        node.parent_id === '0' ? '' : treeDataDic[node.parent_id].name;
+      this.setState({ treeDataDic });
+    } else {
+      node = this.state.treeDataDic[id];
+      parentName =
+        node.parent_id === '0'
+          ? ''
+          : this.state.treeDataDic[node.parent_id].name;
+    }
+    this.setState({
+      treeNodeSelected: {
+        id: node.id,
+        title: node.name,
+        symbol: node.symbol,
+        intro: node.intro,
+        parentId: node.parent_id,
+        parentName
       }
     });
   };
+
   handleTreeNodeUnSelected = () => {
     this.setState({
       treeNodeSelected: {}
@@ -198,9 +223,6 @@ class Dept extends PureComponent {
   }) => {
     console.log('node ' + JSON.stringify(node));
     console.log('nextParentNode ' + JSON.stringify(nextParentNode));
-    // console.log(prevPath);
-    // console.log(nextPath);
-    // let noChange = true;
 
     if (
       prevTreeIndex === nextTreeIndex &&

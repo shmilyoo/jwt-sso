@@ -36,6 +36,7 @@ const RegForm = props => {
       <div>
         <Field
           name="username"
+          autoFocus
           component={RenderTextField}
           label="用户名"
           asyncCheckFlag
