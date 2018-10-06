@@ -1,12 +1,20 @@
+import Cookies from 'js-cookie';
+
 export const types = {
   LOGIN_SUCCESS: 'ACCOUNT/LOGIN_SUCCESS',
   LOGOUT_SUCCESS: 'ACCOUNT/LOGOUT_SUCCESS',
   ADMIN_LOGIN_SUCCESS: 'ACCOUNT/ADMIN_LOGIN_SUCCESS',
   ADMIN_LOGOUT_SUCCESS: 'ACCOUNT/ADMIN_LOGOUT_SUCCESS',
   AUTH_INFO: 'ACCOUNT/AUTH_INFO',
+  CLEAR_AUTH: 'ACCOUNT/CLEAR_AUTH',
   SET_USER_BASIC_INFO: 'ACCOUNT/SET_USER_BASIC_INFO',
+  UPDATE_USER_BASIC_INFO: 'ACCOUNT/UPDATE_USER_BASIC_INFO',
   SAGA_GET_USER_AUTH_INFO: 'ACCOUNT/SAGA_GET_USER_AUTH_INFO',
   SAGA_GET_USER_BASIC_INFO: 'ACCOUNT/SAGA_GET_USER_BASIC_INFO',
+  /**
+   * basicinfo 页面submit
+   */
+  SAGA_UPDATE_USER_BASIC_INFO: 'ACCOUNT/SAGA_UPDATE_USER_BASIC_INFO', //basicinfo 页面submit
   SAGA_REG_REQUEST: 'ACCOUNT/SAGA_REG_REQUEST',
   SAGA_LOGIN_REQUEST: 'ACCOUNT/SAGA_LOGIN_REQUEST',
   SAGA_LOGOUT_REQUEST: 'ACCOUNT/SAGA_LOGOUT_REQUEST',
@@ -27,10 +35,14 @@ export const actions = {
     adminName,
     isSuperAdmin
   }),
-  userAuth: (username, active) => ({
+  userAuth: (id, username, active) => ({
     type: types.AUTH_INFO,
+    id,
     username,
     active
+  }),
+  clearAuth: () => ({
+    type: types.CLEAR_AUTH
   }),
   userLogin: (resolve, values, from) => ({
     type: types.SAGA_LOGIN_REQUEST,
@@ -38,14 +50,20 @@ export const actions = {
     values,
     from
   }),
-  loginSuccess: (username, active) => ({
-    type: types.LOGIN_SUCCESS,
-    username,
-    active
-  }),
+  loginSuccess: (id, username, active) =>
+    actions.userAuth(id, username, active),
   logoutSuccess: () => ({ type: types.LOGOUT_SUCCESS }),
   getBasicInfo: () => ({ type: types.SAGA_GET_USER_BASIC_INFO }),
   setBasicInfo: data => ({ type: types.SET_USER_BASIC_INFO, data }),
+  updateBasicInfoRequest: (resolve, values) => ({
+    type: types.SAGA_UPDATE_USER_BASIC_INFO,
+    resolve,
+    values
+  }),
+  updateBasicInfo: info => ({
+    type: types.UPDATE_USER_BASIC_INFO,
+    data: info
+  }),
   /**
    * 在用户刷新网页，第一次加载时，如果本地cookie有用户信息，则增加一次远程验证
    */
@@ -67,15 +85,26 @@ export default function accountReducer(state = initState, action) {
     case types.AUTH_INFO:
       return {
         ...state,
+        id: action.id,
         username: action.username,
         active: action.active
       };
-    case types.LOGIN_SUCCESS:
+    case types.CLEAR_AUTH:
+      Cookies.remove('username');
+      Cookies.remove('active');
       return {
         ...state,
-        username: action.username,
-        active: action.active
+        id: '',
+        username: '',
+        active: 2,
+        info: {}
       };
+    // case types.LOGIN_SUCCESS:
+    //   return {
+    //     ...state,
+    //     username: action.username,
+    //     active: action.active
+    //   };
     case types.LOGOUT_SUCCESS:
       return {
         ...state,
@@ -96,6 +125,14 @@ export default function accountReducer(state = initState, action) {
         isSuperAdmin: false
       };
     case types.SET_USER_BASIC_INFO:
+      return {
+        ...state,
+        info: {
+          ...state.info,
+          basic: action.data
+        }
+      };
+    case types.UPDATE_USER_BASIC_INFO:
       return {
         ...state,
         info: {

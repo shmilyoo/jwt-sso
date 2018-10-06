@@ -39,7 +39,7 @@ const BasicInfoForm = ({
           )}
           <Grid item xs={3} sm={1}>
             <Field
-              name="username"
+              name="name"
               component={RenderTextField}
               label="姓名"
               validate={required}
@@ -83,7 +83,7 @@ const BasicInfoForm = ({
           </Grid>
           <Grid item xs={3} sm={2}>
             <Field
-              name="idCard"
+              name="id_card"
               label="身份证"
               component={RenderTextField}
               validate={required}
@@ -92,7 +92,7 @@ const BasicInfoForm = ({
           </Grid>
           <Grid item xs={3} sm={2}>
             <Field
-              name="idCard2"
+              name="id_card2"
               label="证件二"
               component={RenderTextField}
               validate={required}
@@ -101,7 +101,7 @@ const BasicInfoForm = ({
           </Grid>
           <Grid item xs={3} sm={1}>
             <Field
-              name="nativePlace"
+              name="native_place"
               label="籍贯"
               component={RenderTextField}
               validate={required}

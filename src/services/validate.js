@@ -3,6 +3,7 @@ import { types as accountTypes } from '../reducers/account';
 
 export const required = value => {
   // console.log(`check required =${value}=`);
+  if (value === 0) return;
   if (!value) return '不能为空';
 };
 

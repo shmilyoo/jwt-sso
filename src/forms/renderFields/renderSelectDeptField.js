@@ -15,6 +15,9 @@ import {
   getLevel1ExpandsfromTreeArray
 } from '../../services/utility';
 
+/**
+ * store存储数据格式为{id:deptId,names:'rootName-childName-...-deptName'}
+ */
 class RenderSelectDeptField extends React.PureComponent {
   state = {
     open: false,
@@ -42,20 +45,24 @@ class RenderSelectDeptField extends React.PureComponent {
 
   handleSelectDept = () => {
     const nodeId = this.state.selectedNode.id;
-    const nodeTitle = this.state.selectedNode.title;
-    const nodes = {};
-    this.state.treeArray.forEach(({ id, parent_id, name }) => {
-      nodes[id] = { id, parent_id, name };
-    });
+    if (!this.nodes) {
+      this.nodes = {};
+      this.state.treeArray.forEach(({ id, parent_id, name }) => {
+        this.nodes[id] = { id, parent_id, name };
+      });
+    }
     let titles = [];
     let current = nodeId;
     while (true) {
-      titles.unshift(nodes[current].name);
-      current = nodes[current].parent_id;
+      titles.unshift(this.nodes[current].name);
+      current = this.nodes[current].parent_id;
       if (current === '0') break;
     }
-    this.props.input.onChange(nodeId);
-    this.setState({ open: false, inputValue: titles.join('-') });
+    //store存储数据格式为{id:deptId,names:'rootName-childName-...-deptName'}
+    const names = titles.join('-');
+    this.props.input.onChange({ id: nodeId, names });
+    this.setState({ open: false });
+    // this.setState({ open: false, inputValue: names });
   };
 
   handleCloseDialog = () => {
@@ -82,7 +89,7 @@ class RenderSelectDeptField extends React.PureComponent {
         <TextField
           label={label}
           {...inputRest}
-          value={inputValue}
+          value={value && value.names}
           onBlur={() => onBlur()} // 因为field的value和显示的文字不同，这样避免onblur更改value
           fullWidth
           error={!!(touched && error)}

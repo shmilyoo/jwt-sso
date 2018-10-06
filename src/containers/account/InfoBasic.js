@@ -14,10 +14,16 @@ class InfoBasic extends PureComponent {
       // store中的account basic info还没有获取或者为空，在页面加载的时候获取一次
       dispatch(accountActions.getBasicInfo());
     }
-    // dispatch(accountActions.setBasicInfo({ sex: 2 }));
   }
 
-  handleSubmit = values => {};
+  handleSubmit = values => {
+    console.log(JSON.stringify(values));
+    return new Promise((resolve, reject) => {
+      this.props.dispatch(
+        accountActions.updateBasicInfoRequest(resolve, values)
+      );
+    });
+  };
   render() {
     const { basicInfo } = this.props;
     return (

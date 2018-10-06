@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { FormControlLabel, Switch } from '@material-ui/core';
 
 const RenderSwitch = ({
-  input,
+  input: { value, ...inputRest },
   label,
   trueLabel,
   falseLabel,
@@ -13,11 +13,9 @@ const RenderSwitch = ({
   return (
     <FormControlLabel
       control={
-        <Switch {...input} {...rest} value="remember" checked={input.value} />
+        <Switch {...inputRest} {...rest} value="remember" checked={!!value} />
       }
-      label={
-        trueLabel && falseLabel ? (input.value ? trueLabel : falseLabel) : label
-      }
+      label={trueLabel && falseLabel ? (value ? trueLabel : falseLabel) : label}
       labelPlacement={labelPlacement}
     />
   );

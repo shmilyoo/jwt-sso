@@ -4,6 +4,7 @@ import NProgress from 'nprogress';
 import qs from 'qs';
 import { server_base_url_product, server_baseURL_dev } from './config';
 import { actions as commonActions } from './reducers/common';
+import { actions as accountActions } from './reducers/account';
 // import { notification, message } from "antd";
 // import { routerRedux } from "dva/router";
 // import store from "../index";
@@ -93,9 +94,16 @@ const configureAxios = (dispatch, history) => {
     },
     error => {
       // 非2xx响应在这里处理
-      if (error.response && error.response.status === 401) {
-        // 自定义401 重定向代替302重定向
+      if (error.response && error.response.status === 456) {
+        // 自定义456 重定向代替302重定向
         history.push(error.response.data);
+        throw new axios.Cancel('cancel request and redirect');
+      }
+      // 401 auth fail响应在这里处理
+      if (error.response && error.response.status === 401) {
+        // 自定义401 auth 失败处理
+        dispatch(accountActions.clearAuth());
+        // 这里throw错误需要在saga中处理，要不然saga会死掉
         throw new axios.Cancel('cancel request and redirect');
       }
       dispatch(

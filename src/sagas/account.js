@@ -1,4 +1,4 @@
-import { fork, take, put, call } from 'redux-saga/effects';
+import { fork, take, put, call, select } from 'redux-saga/effects';
 import { stopSubmit } from 'redux-form';
 import { md5Passwd } from '../services/utility';
 import { types as accountTypes } from '../reducers/account';
@@ -28,12 +28,15 @@ function* regFlow() {
 }
 
 function* loginFlow() {
-  let isLogin = !!localStorage.getItem('token');
+  let username = yield select(state => state.account.username);
+  let isLogin = !!username;
+  // let isLogin =
   while (true) {
     // todo 修改登录流程，改为cookies方式
     console.log('login flow start');
     if (!isLogin) {
       // 如果页面是未登录状态
+      console.log('wait for login request');
       let { resolve, values, from } = yield take(
         accountTypes.SAGA_LOGIN_REQUEST
       );
@@ -47,13 +50,20 @@ function* loginFlow() {
       });
       if (response.success) {
         yield call(resolve);
-        yield put(accountActions.loginSuccess(username, response.data.active));
+        yield put(
+          accountActions.loginSuccess(
+            response.data.id,
+            username,
+            response.data.active
+          )
+        );
         isLogin = true;
         yield call(history.push, from.pathname); // 根据url的redirect进行跳转
       } else {
         isLogin = false;
         yield put(stopSubmit('loginForm', { _error: response.error }));
       }
+      console.log(`log in end, islogin is ${isLogin}`);
     }
     if (isLogin) {
       console.log('等待logout请求');
@@ -62,6 +72,7 @@ function* loginFlow() {
         accountTypes.SAGA_LOGOUT_REQUEST,
         accountTypes.SAGA_FORCE_LOGOUT
       ]);
+      yield put(accountTypes.CLEAR_AUTH);
       console.log(`接收到logout请求${type}`);
       // yield put({ type: accountTypes.LOGOUT_SUCCESS });
       yield put(accountActions.logoutSuccess());
@@ -98,9 +109,10 @@ function* getUserInfoFlow() {
   while (true) {
     yield take(accountTypes.SAGA_GET_USER_AUTH_INFO);
     // url中有username，header中有auth token，服务端综合判定
-    const response = yield axios.get('/account/auth');
-    console.log(response);
-    console.log('测试 强制判断localstorage token信息和远端不一致');
+    try {
+      yield axios.get('/account/auth');
+    } catch (e) {}
+
     // yield put({ type: accountTypes.SAGA_FORCE_LOGOUT });
     // yield put(commonActions.showMessage('远程验证出错，强制退出', 'warn'));
   }
@@ -116,10 +128,26 @@ function* getBasicInfoFlow() {
   }
 }
 
+function* updateBasicInfoFlow() {
+  while (true) {
+    const { resolve, values } = yield take(
+      accountTypes.SAGA_UPDATE_USER_BASIC_INFO
+    );
+    const response = yield axios.post('/account/info', values);
+    if (response.success) {
+      yield put(accountActions.updateBasicInfo(values));
+      yield call(resolve);
+    } else {
+      yield put(stopSubmit('basicInfoForm', { _error: response.error }));
+    }
+  }
+}
+
 export default [
   fork(checkUsernameFlow),
   fork(regFlow),
   fork(getUserInfoFlow),
   fork(loginFlow),
-  fork(getBasicInfoFlow)
+  fork(getBasicInfoFlow),
+  fork(updateBasicInfoFlow)
 ];

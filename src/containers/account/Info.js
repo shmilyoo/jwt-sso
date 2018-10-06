@@ -42,6 +42,7 @@ class Info extends React.Component {
           <Tab label={tabs.tab1.label} value={tabs.tab1.value} />
           <Tab label={tabs.tab2.label} value={tabs.tab2.value} />
           <Tab label={tabs.tab3.label} value={tabs.tab3.value} />
+          <Tab label={tabs.tab4.label} value={tabs.tab4.value} />
         </Tabs>
         <div style={{ marginTop: '2rem' }}>
           {type === tabs.tab1.value && <tabs.tab1.component />}
