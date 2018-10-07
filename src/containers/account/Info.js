@@ -6,16 +6,15 @@ import history from '../../history';
 import qs from 'qs';
 import { actions as commonActions } from '../../reducers/common';
 import InfoBasic from './InfoBasic';
-import BasicInfoForm from '../../forms/account/BasicInfoForm';
-import RegForm from '../../forms/account/RegForm';
+import InfoEducation from './InfoEducation';
 
 // const [tab1, tab2, tab3, tab4] = ['basic', 'education', 'work', 'family'];
-const tabs = {
-  tab1: { label: '基本资料', value: 'basic', component: InfoBasic },
-  tab2: { label: '教育经历', value: 'education', component: RegForm },
-  tab3: { label: '工作经历', value: 'work' },
-  tab4: { label: '家庭关系', value: 'family' }
-};
+const tabs = [
+  { label: '基本资料', value: 'basic', component: InfoBasic },
+  { label: '教育经历', value: 'education', component: InfoEducation },
+  { label: '工作经历', value: 'work', component: InfoEducation },
+  { label: '家庭关系', value: 'family', component: InfoEducation }
+];
 
 class Info extends React.Component {
   constructor(props) {
@@ -29,7 +28,7 @@ class Info extends React.Component {
     const { location } = this.props;
     const type =
       qs.parse(location.search, { ignoreQueryPrefix: true }).type ||
-      tabs.tab1.value;
+      tabs[0].value;
     return (
       <div>
         <Tabs
@@ -39,16 +38,14 @@ class Info extends React.Component {
           textColor="primary"
           fullWidth
         >
-          <Tab label={tabs.tab1.label} value={tabs.tab1.value} />
-          <Tab label={tabs.tab2.label} value={tabs.tab2.value} />
-          <Tab label={tabs.tab3.label} value={tabs.tab3.value} />
-          <Tab label={tabs.tab4.label} value={tabs.tab4.value} />
+          {tabs.map(tab => (
+            <Tab key={tab.value} label={tab.label} value={tab.value} />
+          ))}
         </Tabs>
         <div style={{ marginTop: '2rem' }}>
-          {type === tabs.tab1.value && <tabs.tab1.component />}
-          {type === tabs.tab2.value && <tabs.tab2.component />}
-          {type === tabs.tab3.value && 33333333333333333333333}
-          {type === tabs.tab4.value && 33333333333333333333333}
+          {tabs.map(
+            tab => type === tab.value && <tab.component key={tab.value} />
+          )}
         </div>
       </div>
     );

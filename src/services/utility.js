@@ -18,7 +18,8 @@ export const initAuthInfoAtStart = dispatch => {
   if (username && active) {
     dispatch(accountActions.userAuth(username, active));
     // 如果本地保存有用户信息，则从服务器获取用户实时相关信息，避免本地信息过期或被篡改
-    dispatch(accountActions.getUserAuthInfo());
+    // todo 暂时取消下行，因为后端中间件会检查对比cookie和session信息，不一致则返回401
+    // dispatch(accountActions.getUserAuthInfo());
   }
 };
 

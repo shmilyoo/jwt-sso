@@ -133,7 +133,7 @@ function* updateBasicInfoFlow() {
     const { resolve, values } = yield take(
       accountTypes.SAGA_UPDATE_USER_BASIC_INFO
     );
-    const response = yield axios.post('/account/info', values);
+    const response = yield axios.post('/account/info/basic', values);
     if (response.success) {
       yield put(accountActions.updateBasicInfo(values));
       yield call(resolve);
