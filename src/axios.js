@@ -1,8 +1,6 @@
 // request.js
 import axios from 'axios';
 import NProgress from 'nprogress';
-import qs from 'qs';
-import { server_base_url_product, server_baseURL_dev } from './config';
 import { actions as commonActions } from './reducers/common';
 import { actions as accountActions } from './reducers/account';
 // import { notification, message } from "antd";
@@ -58,16 +56,19 @@ const configureAxios = (dispatch, history) => {
     config => {
       // 请求开始，蓝色过渡滚动条开始出现
       NProgress.start();
-      if (process.env.NODE_ENV === 'production') {
-        // 生产环境下，设置为后端服务器地址
-        config.baseURL = server_base_url_product;
-      } else {
-        config.baseURL = server_baseURL_dev;
-      }
-      if (config.method === 'post') {
-        // content-type 自动设置为application/x-www-form-urlencoded
-        config.data = qs.stringify(config.data);
-      }
+      // if (process.env.NODE_ENV === 'production') {
+      //   // 生产环境下，设置为后端服务器地址
+      //   config.baseURL = server_base_url_product;
+      // } else {
+      //   config.baseURL = server_baseURL_dev;
+      // }
+      // if (config.method === 'post') {
+      //   // content-type 自动设置为application/x-www-form-urlencoded
+      //   config.data = JSON.stringify(config.data);
+      //   config.headers.post['Content-Type'] = 'text/plain';
+      //   console.log(config.headers.post['Content-Type']);
+      //   // config.content
+      // }
       // 考虑后还是采用cookie-session的方案吧
       // const token = localStorage.getItem('token');
       // if (token) {
@@ -97,13 +98,14 @@ const configureAxios = (dispatch, history) => {
       if (error.response && error.response.status === 456) {
         // 自定义456 重定向代替302重定向
         history.push(error.response.data);
-        throw new axios.Cancel('cancel request and redirect');
+        return { success: true, message: 'redirect by server' };
       }
       // 401 auth fail响应在这里处理
       if (error.response && error.response.status === 401) {
         // 自定义401 auth 失败处理
         dispatch(accountActions.clearAuth());
         dispatch(accountActions.sagaForceLogout());
+        NProgress.done();
         return { success: false, error: error.message };
         // 这里throw错误需要在saga中处理，要不然saga会死掉
         // throw new axios.Cancel('cancel request and redirect');
@@ -114,9 +116,6 @@ const configureAxios = (dispatch, history) => {
           'error'
         )
       );
-      // console.error(
-      //   'interceptors response, error is ' + JSON.stringify(error.message)
-      // );
       // 请求结束，蓝色过渡滚动条消失
       // 即使出现异常，也要调用关闭方法，否则一直处于加载状态很奇怪
       NProgress.done();

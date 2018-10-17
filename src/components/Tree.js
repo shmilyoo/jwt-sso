@@ -8,7 +8,7 @@ import Autorenew from '@material-ui/icons/Autorenew';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import 'react-sortable-tree/style.css';
-import '../assets/css/adminDeptTree.css'; // 自定义的一些样式
+import '../assets/css/customDeptTree.css'; // 自定义的一些样式
 
 const style = {
   refreshBtn: { width: '2.5rem', height: '2.5rem' },

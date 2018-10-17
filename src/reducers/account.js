@@ -13,8 +13,8 @@ export const types = {
   SAGA_GET_USER_AUTH_INFO: 'ACCOUNT/SAGA_GET_USER_AUTH_INFO',
   SAGA_GET_USER_BASIC_INFO: 'ACCOUNT/SAGA_GET_USER_BASIC_INFO',
   SAGA_GET_USER_EXP_INFO: 'ACCOUNT/SAGA_GET_USER_EXP_INFO',
-  SAGA_ADD_USER_EXP_INFO: 'ACCOUNT/SAGA_ADD_USER_EXP_INFO',
-  SAGA_UPDATE_USER_BASIC_INFO: 'ACCOUNT/SAGA_UPDATE_USER_BASIC_INFO', //basicinfo 页面submit
+  SAGA_SET_USER_EXP_INFO: 'ACCOUNT/SAGA_SET_USER_EXP_INFO',
+  SAGA_SET_USER_BASIC_INFO: 'ACCOUNT/SAGA_SET_USER_BASIC_INFO', //basicinfo 页面submit
   SAGA_REG_REQUEST: 'ACCOUNT/SAGA_REG_REQUEST',
   SAGA_LOGIN_REQUEST: 'ACCOUNT/SAGA_LOGIN_REQUEST',
   SAGA_LOGOUT_REQUEST: 'ACCOUNT/SAGA_LOGOUT_REQUEST',
@@ -56,14 +56,10 @@ export const actions = {
   logoutSuccess: () => ({ type: types.LOGOUT_SUCCESS }),
   getBasicInfo: () => ({ type: types.SAGA_GET_USER_BASIC_INFO }),
   setBasicInfo: data => ({ type: types.SET_USER_BASIC_INFO, data }),
-  updateBasicInfoRequest: (resolve, values) => ({
-    type: types.SAGA_UPDATE_USER_BASIC_INFO,
+  setBasicInfoRequest: (resolve, values) => ({
+    type: types.SAGA_SET_USER_BASIC_INFO,
     resolve,
     values
-  }),
-  updateBasicInfo: info => ({
-    type: types.UPDATE_USER_BASIC_INFO,
-    data: info
   }),
   /**
    * 在用户刷新网页，第一次加载时，如果本地cookie有用户信息，则增加一次远程验证
@@ -76,15 +72,16 @@ export const actions = {
     type: types.SAGA_GET_USER_EXP_INFO,
     kind
   }),
-  addExpInfo: (kind, value) => ({
-    type: types.SAGA_ADD_USER_EXP_INFO,
+  setExpInfoRequest: (resolve, kind, values) => ({
+    type: types.SAGA_SET_USER_EXP_INFO,
+    resolve,
     kind,
-    value
+    values
   }),
-  setExpInfo: (kind, value) => ({
+  setExpInfo: (kind, values) => ({
     type: types.SET_USER_EXP_INFO,
-    value,
-    kind
+    kind,
+    values
   })
 };
 
@@ -93,11 +90,7 @@ const initState = {
   active: 2,
   adminName: '',
   isSuperAdmin: false,
-  info: {
-    basic: null,
-    work: [],
-    education: []
-  }
+  info: {} // {basic:{},work:[],education,[]}
 };
 
 export default function accountReducer(state = initState, action) {
@@ -114,22 +107,12 @@ export default function accountReducer(state = initState, action) {
       Cookies.remove('active');
       return {
         ...state,
-        id: '',
-        username: '',
-        active: 2,
-        info: {}
+        ...initState
       };
-    // case types.LOGIN_SUCCESS:
-    //   return {
-    //     ...state,
-    //     username: action.username,
-    //     active: action.active
-    //   };
     case types.LOGOUT_SUCCESS:
       return {
         ...state,
-        username: '',
-        active: 2
+        ...initState
       };
     case types.ADMIN_LOGIN_SUCCESS:
       return {
@@ -165,7 +148,7 @@ export default function accountReducer(state = initState, action) {
         ...state,
         info: {
           ...state.info,
-          [action.kind]: action.value
+          [action.kind]: action.values
         }
       };
     default:

@@ -2,13 +2,14 @@ import AccountBox from '@material-ui/icons/AccountBox';
 
 const config = {};
 
-const pathTitle = {
+export const pathTitle = {
   '/brief/mine': '个人概况',
   '/brief/department': '部门概况',
   '/account/info': '资料',
   '/account/changePasswd': '修改密码',
   '/account/changePasswd2': '修改密码2',
   '/account/changePasswd3': '修改密码3',
+  '/about': '关于',
   '/admin/organ/dept': '部门管理',
   '/admin/organ/person': '人员管理',
   '/admin/interface/api': '接口注册',
@@ -25,7 +26,7 @@ export const server_baseURL_dev = 'http://localhost:7001';
 export const leftMenu = [
   {
     title: '概况',
-    state: 'brief',
+    state: 'brief', // 用于有子元素的菜单，在this.state中标记下拉是否展开
     icon: AccountBox,
     children: [
       { title: pathTitle['/brief/mine'], path: '/brief/mine' },
@@ -37,10 +38,19 @@ export const leftMenu = [
     state: 'account',
     icon: AccountBox,
     children: [
-      { title: '资料', path: '/account/info' },
-      { title: '修改密码', path: '/account/changePasswd' },
-      { title: '修改密码2', path: '/account/changePasswd2' },
-      { title: '修改密码3', path: '/account/changePasswd3' }
+      { title: pathTitle['/account/info'], path: '/account/info' },
+      {
+        title: pathTitle['/account/changePasswd'],
+        path: '/account/changePasswd'
+      },
+      {
+        title: pathTitle['/account/changePasswd2'],
+        path: '/account/changePasswd2'
+      },
+      {
+        title: pathTitle['/account/changePasswd3'],
+        path: '/account/changePasswd3'
+      }
     ]
   },
   { title: '关于', path: '/about', icon: AccountBox }
@@ -51,27 +61,33 @@ export const adminLeftMenu = [
     title: '组织机构',
     state: 'organ',
     children: [
-      { title: '部门管理', path: '/admin/organ/dept' },
-      { title: '人员管理', path: '/admin/organ/person' }
+      { title: pathTitle['/admin/organ/dept'], path: '/admin/organ/dept' },
+      { title: pathTitle['/admin/organ/person'], path: '/admin/organ/person' }
     ]
   },
   {
     title: '接口管理',
     state: 'interface',
     children: [
-      { title: '接口注册', path: '/admin/interface/api' },
-      { title: 'sso管理', path: '/admin/interface/sso' }
+      {
+        title: pathTitle['/admin/interface/api'],
+        path: '/admin/interface/api'
+      },
+      { title: pathTitle['/admin/interface/sso'], path: '/admin/interface/sso' }
     ]
   },
   {
     title: '超级管理',
     state: 'super',
     children: [
-      { title: '添加管理', path: '/admin/super/addAdmin' },
-      { title: '管理列表', path: '/admin/super/admins' }
+      {
+        title: pathTitle['/admin/super/addAdmin'],
+        path: '/admin/super/addAdmin'
+      },
+      { title: pathTitle['/admin/super/admins'], path: '/admin/super/admins' }
     ]
   },
-  { title: '关于', state: 'about', path: '/admin/about' }
+  { title: pathTitle['/admin/about'], state: 'about', path: '/admin/about' }
 ];
 
 export default config;

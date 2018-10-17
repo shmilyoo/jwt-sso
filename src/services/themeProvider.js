@@ -2,32 +2,81 @@ import React from 'react';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 
+/*
+google four color
+web:
+green:{
+  main:'#00b74e',
+  light:'#59ea7d',
+  dark:'#008620',
+  contrastText:'#000'
+},
+yellow:{
+  main:'#F5C900',
+  light:'#fffc50',
+  dark:'#be9900',
+  contrastText:'#000'
+},
+red:{
+  main:'#EC2935',
+  light:'#ff6560',
+  dark:'#b1000e',
+  contrastText:'#000'
+},
+blue:{
+  main:'#6657F8',
+  light:'#9f85ff',
+  dark:'#1d2cc4',
+  contrastText:'#FFF'
+}
+*/
+
 // A theme with custom primary and secondary color.
 // It's optional.
 const theme = createMuiTheme({
   palette: {
     background: { default: '#eee' },
-    primary: {
-      light: '#757ce8',
-      main: '#3f50b5',
-      dark: '#002884',
-      contrastText: '#fff'
-    },
+    // primary: {
+    //   light: '#757ce8',
+    //   main: '#3f50b5',
+    //   dark: '#002884',
+    //   contrastText: '#fff'
+    // },
     secondary: {
       light: '#82e9de',
       main: '#4db6ac',
       dark: '#00867d',
       contrastText: '#000'
     },
+    primary: {
+      main: '#6657F8',
+      light: '#9f85ff',
+      dark: '#1d2cc4',
+      contrastText: '#FFF'
+    },
+    // secondary: {
+    //   main: '#6657F8',
+    //   light: '#9f85ff',
+    //   dark: '#1d2cc4',
+    //   contrastText: '#FFF'
+    // },
     info: {
-      light: '#bef67a',
-      main: '#8bc34a',
-      dark: '#5a9216'
+      light: '#9fc8ff',
+      main: '#6a98e9',
+      dark: '#316ab6',
+      contrastText: '#000'
     },
     warn: {
-      light: '#fff350',
-      main: '#ffc107',
-      dark: '#c79100'
+      main: '#F5C900',
+      light: '#fffc50',
+      dark: '#be9900',
+      contrastText: '#000'
+    },
+    error: {
+      main: '#EC2935',
+      light: '#ff6560',
+      dark: '#b1000e',
+      contrastText: '#000'
     },
     text: {
       primary: 'rgba(0, 0, 0, 0.87)',
@@ -35,6 +84,7 @@ const theme = createMuiTheme({
     }
   },
   typography: {
+    useNextVariants: true,
     // Tell Material-UI what's the font-size on the html element is.
     htmlFontSize: 10,
     fontSize: 14,

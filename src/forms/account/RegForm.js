@@ -65,14 +65,14 @@ const RegForm = props => {
       <div className={classes.buttonLine}>
         <Button
           type="submit"
-          variant="raised"
+          variant="contained"
           color="primary"
           disabled={pristine || submitting}
         >
           注册
         </Button>
         <Button
-          variant="flat"
+          variant="text"
           // color="second"
           onClick={reset}
           disabled={pristine || submitting}

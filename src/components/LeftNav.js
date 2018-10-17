@@ -85,7 +85,7 @@ class LeftNav extends React.PureComponent {
             className={classes.leftHeader}
             component="div"
             align="center"
-            variant="title"
+            variant="h6"
           >
             {header}
           </Typography>

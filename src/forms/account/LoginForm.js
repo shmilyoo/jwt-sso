@@ -50,7 +50,7 @@ const LoginForm = props => {
       <div className={classes.buttonLine}>
         <Button
           type="submit"
-          variant="raised"
+          variant="contained"
           color="primary"
           disabled={pristine || submitting}
         >

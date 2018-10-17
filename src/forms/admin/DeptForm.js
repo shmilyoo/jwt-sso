@@ -88,7 +88,7 @@ const DeptForm = props => {
         <Grid item>
           <Button
             type="submit"
-            variant="raised"
+            variant="contained"
             color="primary"
             disabled={pristine || submitting}
           >
@@ -98,7 +98,7 @@ const DeptForm = props => {
 
         <Grid item>
           <Button
-            variant="flat"
+            variant="text"
             onClick={reset}
             disabled={pristine || submitting}
           >
@@ -110,7 +110,7 @@ const DeptForm = props => {
             <Button
               onClick={onDelete}
               className={classes.delBtn}
-              variant="flat"
+              variant="text"
               disabled={!valid}
             >
               删除

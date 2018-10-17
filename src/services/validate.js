@@ -99,3 +99,23 @@ export const shouldAsyncValidate = params => {
       return false;
   }
 };
+
+/**
+ * submit的时候，验证结束时间to，必须大于起始时间from。或者to为null
+ * @param {array[]} values form submit values
+ * @return {?{[fieldName:string]:string}} null代表验证通过
+ */
+export const syncCheckExpDate = values => {
+  if (!values.exps) return null;
+  let result = {};
+  // fieldarray 返回的错误对象 {exps:{0:{to:'error'}}}
+  values.exps.forEach((exp, index) => {
+    if (exp.to === null) return false;
+    if (exp.to < exp.from)
+      result['exps'] = {
+        ...result.exps,
+        [index]: { to: '结束时间必须大于开始时间' }
+      };
+  });
+  return JSON.stringify(result) === '{}' ? null : result;
+};

@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   TextField,
-  MenuItem,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -83,7 +82,7 @@ class RenderSelectDeptField extends React.PureComponent {
       meta: { touched, error },
       ...rest
     } = this.props;
-    const { open, treeData, inputValue } = this.state;
+    const { open, treeData } = this.state;
     return (
       <React.Fragment>
         <TextField
@@ -113,13 +112,13 @@ class RenderSelectDeptField extends React.PureComponent {
           <DialogActions>
             <Button
               disabled={!this.state.selectedNode.id}
-              variant="raised"
+              variant="contained"
               color="primary"
               onClick={this.handleSelectDept}
             >
               确定
             </Button>
-            <Button variant="flat" onClick={this.handleCloseDialog}>
+            <Button variant="text" onClick={this.handleCloseDialog}>
               取消
             </Button>
           </DialogActions>

@@ -69,7 +69,7 @@ const BasicInfoForm = ({
               normalize={trim}
             />
           </Grid>
-          <Grid item xs={3} sm={1}>
+          <Grid item xs={3} sm={2}>
             <Field
               name="birthday"
               label="出生日期"
@@ -137,15 +137,14 @@ const BasicInfoForm = ({
         <div>
           <Button
             type="submit"
-            variant="raised"
+            variant="contained"
             color="primary"
             disabled={pristine || submitting}
           >
             保存
           </Button>
           <Button
-            variant="flat"
-            // color="second"
+            variant="text"
             onClick={reset}
             disabled={pristine || submitting}
           >

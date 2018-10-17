@@ -4,6 +4,7 @@ import { withStyles } from '@material-ui/core';
 import LeftNav from '../../components/LeftNav';
 import { adminLeftMenu } from '../../config';
 import Dept from './Dept';
+import Sso from './Sso';
 import AppHead from '../AppHead';
 
 const drawerWidth = 250;
@@ -30,7 +31,8 @@ const style = () => ({
   main: {
     padding: 24,
     flex: 'auto',
-    display: 'flex'
+    display: 'flex',
+    overflowX: 'hidden'
   },
   white: {
     color: 'white'
@@ -52,6 +54,7 @@ const AdminRoot = ({ classes }) => {
         <div className={classes.main}>
           <Switch>
             <Route path="/admin/organ/dept" component={Dept} />
+            <Route path="/admin/interface/sso" component={Sso} />
           </Switch>
         </div>
       </div>

@@ -1,9 +1,6 @@
 import React, { PureComponent } from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
 import { connect } from 'react-redux';
 import BasicInfoForm from '../../forms/account/BasicInfoForm';
-import { Button } from '@material-ui/core';
 import compose from 'recompose/compose';
 import { actions as accountActions } from '../../reducers/account';
 
@@ -18,10 +15,8 @@ class InfoBasic extends PureComponent {
 
   handleSubmit = values => {
     console.log(JSON.stringify(values));
-    return new Promise((resolve, reject) => {
-      this.props.dispatch(
-        accountActions.updateBasicInfoRequest(resolve, values)
-      );
+    return new Promise(resolve => {
+      this.props.dispatch(accountActions.setBasicInfoRequest(resolve, values));
     });
   };
   render() {

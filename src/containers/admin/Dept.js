@@ -16,7 +16,6 @@ import compose from 'recompose/compose';
 import { reset, initialize } from 'redux-form';
 import { actions as commonActions } from '../../reducers/common';
 import {
-  getDeptWithParent,
   getDeptArray,
   makeDeptTree,
   getLevel1ExpandsfromTreeArray
@@ -25,7 +24,7 @@ import Tree from '../../components/Tree';
 import DeptForm from '../../forms/admin/DeptForm';
 // import DeptForm from '../../forms/admin/DeptForm';
 
-const style = theme => ({
+const style = () => ({
   root: {
     display: 'flex'
   },
@@ -37,7 +36,7 @@ const style = theme => ({
     flex: 'auto'
   },
   modeLink: {
-    paddingLeft: '2rem',
+    marginLeft: '2rem',
     cursor: 'pointer',
     '&:hover': { textDecoration: 'underline' }
   }
@@ -249,7 +248,7 @@ class Dept extends PureComponent {
         parentId: parentId,
         compeer: compeer
       })
-      .then(res => {
+      .then(() => {
         console.log('dept move success');
       });
   };
@@ -384,14 +383,14 @@ class Dept extends PureComponent {
           </DialogContent>
           <DialogActions>
             <Button
-              variant="raised"
+              variant="contained"
               color="primary"
               onClick={this.handleConfirmDeleteDialogOk}
             >
               确认
             </Button>
             <Button
-              variant="flat"
+              variant="text"
               onClick={this.handleConfirmDeleteDialogClose}
             >
               取消

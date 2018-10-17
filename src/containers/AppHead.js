@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, IconButton } from '@material-ui/core';
 import {
   Menu as MenuIcon,
@@ -9,11 +10,11 @@ import {
 } from '@material-ui/icons';
 import { types as accountTypes } from '../reducers/account';
 import compose from 'recompose/compose';
+import { pathTitle, sysName } from '../config';
 
 function mapStateToProps(state) {
   return {
-    username: state.account.username,
-    title: state.common.title
+    username: state.account.username
   };
 }
 
@@ -23,13 +24,14 @@ function mapDispatchToProps(dispatch, ownProps) {
       if (ownProps.type === 'user') {
         dispatch({ type: accountTypes.SAGA_LOGOUT_REQUEST });
       } else {
-        this.props.dispatch({ type: accountTypes.SAGA_LOGOUT_REQUEST });
+        dispatch({ type: accountTypes.SAGA_LOGOUT_REQUEST });
       }
     }
   };
 }
 
-const AppHead = ({ onMenuClick, title, logout, color }) => {
+const AppHead = ({ onMenuClick, logout, color, location: { pathname } }) => {
+  document.title = `${pathTitle[pathname]} - ${sysName}`;
   return (
     <AppBar color={color} position="static">
       <Toolbar style={{ display: 'flex' }}>
@@ -37,7 +39,7 @@ const AppHead = ({ onMenuClick, title, logout, color }) => {
           <MenuIcon />
         </IconButton>
         <Typography style={{ flex: 'auto' }} variant="title">
-          {title}
+          {pathTitle[pathname]}
         </Typography>
         <IconButton>
           <UserIcon />
@@ -64,6 +66,7 @@ AppHead.defaultProps = {
 };
 
 export default compose(
+  withRouter,
   connect(
     mapStateToProps,
     mapDispatchToProps

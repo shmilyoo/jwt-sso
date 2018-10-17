@@ -70,6 +70,7 @@ class Home extends React.Component {
             <Switch>
               <Route path="/account/info" component={Info} />
               <Route path="/account/passwd" component={null} />
+              <Route path="/sso/reg" component={null} />
               <Route path="/about" component={null} />
             </Switch>
           </div>

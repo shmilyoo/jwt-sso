@@ -1,6 +1,5 @@
 // 一些辅助函数
 import { actions as accountActions } from '../reducers/account';
-import jwtDecode from 'jwt-decode';
 import md5 from 'md5';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -14,7 +13,7 @@ export const initAuthInfoAtStart = dispatch => {
   // todo 修改为cookie 存储
   // decode token， state中dispatch设置username active 等信息，判断过期时间等
   const username = Cookies.get('username');
-  const active = Number.parseInt(Cookies.get('active'));
+  const active = Number.parseInt(Cookies.get('active'), 10);
   if (username && active) {
     dispatch(accountActions.userAuth(username, active));
     // 如果本地保存有用户信息，则从服务器获取用户实时相关信息，避免本地信息过期或被篡改

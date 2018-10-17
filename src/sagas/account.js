@@ -1,10 +1,11 @@
-import { fork, take, put, call, select } from 'redux-saga/effects';
+import { fork, take, put, call } from 'redux-saga/effects';
 import { stopSubmit } from 'redux-form';
 import { md5Passwd } from '../services/utility';
 import { types as accountTypes } from '../reducers/account';
 import { actions as accountActions } from '../reducers/account';
 import { types as commonTypes } from '../reducers/common';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import history from '../history';
 
 /**
@@ -28,11 +29,8 @@ function* regFlow() {
 }
 
 function* loginFlow() {
-  let username = yield select(state => state.account.username);
-  let isLogin = !!username;
-  // let isLogin =
+  let isLogin = !!Cookies.get('username');
   while (true) {
-    // todo 修改登录流程，改为cookies方式
     console.log('login flow start');
     if (!isLogin) {
       // 如果页面是未登录状态
@@ -67,15 +65,18 @@ function* loginFlow() {
     }
     if (isLogin) {
       console.log('等待logout请求');
-      // 这里应同时接收强制退出action，在启用应用验证用户出错，或者token失效等场合
       const { type } = yield take([
         accountTypes.SAGA_LOGOUT_REQUEST,
         accountTypes.SAGA_FORCE_LOGOUT
       ]);
-      yield put(accountTypes.CLEAR_AUTH);
-      console.log(`接收到logout请求${type}`);
-      // yield put({ type: accountTypes.LOGOUT_SUCCESS });
-      yield put(accountActions.logoutSuccess());
+      if (type === accountTypes.SAGA_LOGOUT_REQUEST) {
+        const response = yield axios.post('/account/logout');
+        if (response.success) {
+          yield put(accountActions.logoutSuccess());
+        } else {
+          yield put(accountActions.clearAuth());
+        }
+      }
       isLogin = false;
     }
   }
@@ -128,14 +129,41 @@ function* getBasicInfoFlow() {
   }
 }
 
-function* updateBasicInfoFlow() {
+function* setBasicInfoFlow() {
   while (true) {
     const { resolve, values } = yield take(
-      accountTypes.SAGA_UPDATE_USER_BASIC_INFO
+      accountTypes.SAGA_SET_USER_BASIC_INFO
     );
     const response = yield axios.post('/account/info/basic', values);
     if (response.success) {
-      yield put(accountActions.updateBasicInfo(values));
+      yield put(accountActions.setBasicInfo(values));
+      yield call(resolve);
+    } else {
+      yield put(stopSubmit('basicInfoForm', { _error: response.error }));
+    }
+  }
+}
+
+function* getExpInfoFlow() {
+  while (true) {
+    const { kind: type } = yield take(accountTypes.SAGA_GET_USER_EXP_INFO);
+    const response = yield axios.get(`/account/info/exp/${type}`);
+    if (response.success) {
+      yield put(accountActions.setExpInfo(type, response.data));
+    }
+  }
+}
+// SAGA_SET_USER_EXP_INFO
+
+function* setExpInfoFlow() {
+  while (true) {
+    const { resolve, kind: type, values } = yield take(
+      accountTypes.SAGA_SET_USER_EXP_INFO
+    );
+    console.log(JSON.stringify(values));
+    const response = yield axios.post(`/account/info/exp/${type}`, values);
+    if (response.success) {
+      yield put(accountActions.setExpInfo(type, response.data));
       yield call(resolve);
     } else {
       yield put(stopSubmit('basicInfoForm', { _error: response.error }));
@@ -149,5 +177,7 @@ export default [
   fork(getUserInfoFlow),
   fork(loginFlow),
   fork(getBasicInfoFlow),
-  fork(updateBasicInfoFlow)
+  fork(setBasicInfoFlow),
+  fork(getExpInfoFlow),
+  fork(setExpInfoFlow)
 ];

@@ -22,7 +22,7 @@ const styles = theme => ({
 class Login extends React.Component {
   handleSubmit = values => {
     const state = this.props.location.state;
-    const from = state ? state.from : this.props.location;
+    const from = state ? state.from : '/';
     return new Promise(resolve => {
       // 如果是从未授权初始页面跳转到login页面，则成功后跳转回去。
       // 如果是以dialog方式跳出的login组件，则返回当前页面

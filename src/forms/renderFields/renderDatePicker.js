@@ -26,6 +26,7 @@ class CustomInput extends React.PureComponent {
         label={label}
         {...input}
         fullWidth
+        autoComplete="off"
         error={!!(touched && error)}
         helperText={touched && error ? error : ' '}
         value={value || nullText} // 和react-datepicker 的selected值关联，不是redux-form的value
@@ -86,8 +87,8 @@ const RenderDatePicker = ({
         showYearDropdown
         showMonthDropdown
         yearDropdownItemNumber={100} // 设置合适的数值，这个要不然得一个一个点，不方便
-        minDate={minDate ? moment(minDate) : null}
-        maxDate={maxDate ? moment(maxDate) : null}
+        minDate={minDate ? moment(minDate) : moment('1970-01-01')}
+        maxDate={maxDate ? moment(maxDate) : moment()}
         scrollableYearDropdown
       />
     </div>
