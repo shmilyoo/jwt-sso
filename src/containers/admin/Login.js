@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import LoginForm from '../../forms/account/LoginForm';
 import { Card, CardContent, Typography, withStyles } from '@material-ui/core';
 import compose from 'recompose/compose';
@@ -37,11 +37,14 @@ class AdminLogin extends React.PureComponent {
                 管理员登录
               </Typography>
               <LoginForm
-                admin
                 form="adminLoginForm"
                 initialValues={{ username: 'aaa', remember: true }}
                 onSubmit={this.handleSubmit}
               />
+              <Typography align="right" className={classes.buttomText}>
+                没有账户,
+                <Link to="/admin/reg">申请管理员</Link>
+              </Typography>
             </CardContent>
           </Card>
         )}

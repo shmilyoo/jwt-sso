@@ -87,7 +87,7 @@ export const actions = {
 
 const initState = {
   username: '',
-  active: 2,
+  active: 2, // 账户状态: 0正常，1未激活,2禁用
   adminName: '',
   isSuperAdmin: false,
   info: {} // {basic:{},work:[],education,[]}

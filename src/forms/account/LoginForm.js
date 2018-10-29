@@ -58,12 +58,6 @@ const LoginForm = props => {
         </Button>
         <Field name="remember" component={RenderSwitch} label="记住我" />
       </div>
-      <Typography align="right" className={classes.buttomText}>
-        没有账户,
-        <Link to={admin ? '/admin/reg' : '/reg'}>
-          {admin ? '申请管理员' : '注册'}
-        </Link>
-      </Typography>
     </form>
   );
 };

@@ -31,6 +31,9 @@ blue:{
 }
 */
 
+const primaryTextColor = 'rgba(0, 0, 0, 0.87)';
+const secondaryTextColor = 'rgba(0, 0, 0, 0.54)';
+
 // A theme with custom primary and secondary color.
 // It's optional.
 const theme = createMuiTheme({
@@ -79,8 +82,8 @@ const theme = createMuiTheme({
       contrastText: '#000'
     },
     text: {
-      primary: 'rgba(0, 0, 0, 0.87)',
-      secondary: 'rgba(0, 0, 0, 0.54)'
+      primary: primaryTextColor,
+      secondary: secondaryTextColor
     }
   },
   typography: {
@@ -110,6 +113,13 @@ const theme = createMuiTheme({
     },
     title4: {
       fontSize: '4rem'
+    }
+  },
+  sharedClass: {
+    link: {
+      cursor: 'pointer',
+      '&:hover': { textDecoration: 'underline' },
+      '&:visited': { color: secondaryTextColor }
     }
   }
 });

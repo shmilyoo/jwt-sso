@@ -95,9 +95,11 @@ const configureAxios = (dispatch, history) => {
     },
     error => {
       // 非2xx响应在这里处理
-      if (error.response && error.response.status === 456) {
-        // 自定义456 重定向代替302重定向
-        history.push(error.response.data);
+      if (error.response && error.response.status === 402) {
+        // 自定义402 重定向代替302重定向,用于服务器主动向客户端发送重定向。
+        // 服务器响应客户端重定向在前台代码中处理，使用200status，并有redirect字段
+        NProgress.done();
+        global.location = error.response.data.data.location;
         return { success: true, message: 'redirect by server' };
       }
       // 401 auth fail响应在这里处理
@@ -121,6 +123,7 @@ const configureAxios = (dispatch, history) => {
       NProgress.done();
       // return Promise.reject(error);
       console.log(error.response.data, error.response.status);
+      console.log(error.response);
       throw new axios.Cancel('cancel request and redirect');
     }
   );

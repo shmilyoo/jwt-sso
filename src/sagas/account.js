@@ -40,7 +40,7 @@ function* loginFlow() {
       );
       const username = values.username.toLowerCase();
       const password = md5Passwd(values.password);
-      const remember = values.remember || false;
+      const remember = !!values.remember;
       const response = yield axios.post('account/login', {
         username,
         password,

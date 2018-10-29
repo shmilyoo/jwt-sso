@@ -2,11 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Field, reduxForm } from 'redux-form';
 import Button from '@material-ui/core/Button';
+import Reply from '@material-ui/icons/Reply';
 import compose from 'recompose/compose';
 import { withStyles } from '@material-ui/core/styles';
 import { required } from '../../services/validate';
 import { trim } from '../../services/normalize';
-import { RenderTextField } from '../../forms/renderFields';
+import { RenderTextField, RenderRandomCode } from '../../forms/renderFields';
 import { Grid } from '@material-ui/core';
 
 const styles = () => ({});
@@ -48,17 +49,30 @@ const SsoForm = ({
               name="origins"
               component={RenderTextField}
               validate={required}
-              label="限定系统来源origin(ip:port)，以;分隔，*代表不限制ip地址来源"
+              normalize={trim}
+              label="限定系统来源origin(http(s)://ip:port)，以;分隔"
             />
           </Grid>
         </Grid>
-        <Grid item>
-          <Field
-            name="intro"
-            component={RenderTextField}
-            normalize={trim}
-            label="系统介绍"
-          />
+        <Grid item container spacing={24}>
+          <Grid item xs={3}>
+            <Field
+              name="code"
+              component={RenderRandomCode}
+              readOnly={mode !== 'add'}
+              normalize={trim}
+              validate={required}
+              label="认证密码"
+            />
+          </Grid>
+          <Grid item xs>
+            <Field
+              name="intro"
+              component={RenderTextField}
+              normalize={trim}
+              label="系统介绍"
+            />
+          </Grid>
         </Grid>
         <Grid item container spacing={32} justify="center">
           <Grid item>
@@ -83,6 +97,7 @@ const SsoForm = ({
           {mode === 'edit' ? (
             <Grid item>
               <Button variant="text" onClick={onToAddModeClick}>
+                <Reply />
                 添加
               </Button>
             </Grid>

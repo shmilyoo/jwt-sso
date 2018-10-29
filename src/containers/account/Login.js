@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 import LoginForm from '../../forms/account/LoginForm';
 import { Card, CardContent, Typography, withStyles } from '@material-ui/core';
 import compose from 'recompose/compose';
@@ -11,7 +11,7 @@ const styles = theme => ({
     width: '30rem'
   },
   container: {
-    height: '100%',
+    height: '80%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center'
@@ -46,6 +46,10 @@ class Login extends React.Component {
                 initialValues={{ username: 'dddd', remember: true }}
                 onSubmit={this.handleSubmit}
               />
+              <Typography align="right" className={classes.buttomText}>
+                没有账户,
+                <Link to="/reg">注册</Link>
+              </Typography>
             </CardContent>
           </Card>
         )}

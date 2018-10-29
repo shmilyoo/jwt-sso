@@ -71,7 +71,7 @@ export const getLevel1ExpandsfromTreeArray = treeArray => {
  *
  * @param {Array} deptArray 按照level从小到大排列的dept object数组
  * @param {(boolean|Object)} expanded id:bool 对象 设置各个节点是否展开,如果是Boolean则代表全展开或全折叠
- * @return {Array} [符合react-sortable-tree数据格式的数组,如果是第一次mount后返回的新expands值]
+ * @return {Array} 符合react-sortable-tree数据格式的数组
  */
 export const makeDeptTree = (deptArray, expanded) => {
   // [{name,intro,parent,path,level,id,sid},{},{}]

@@ -9,6 +9,8 @@ import themeProvider from './services/themeProvider';
 import compose from 'recompose/compose';
 import AdminRoot from './containers/admin/AdminRoot';
 import AdminLogin from './containers/admin/Login';
+import AuthLogin from './containers/sso/AuthLogin';
+import CountDownRedirect from './containers/common/CountDownRedirect';
 
 class App extends React.Component {
   componentDidUpdate() {
@@ -18,6 +20,8 @@ class App extends React.Component {
     return (
       <React.Fragment>
         <Switch>
+          <Route exact path="/redirect" component={CountDownRedirect} />
+          <Route exact path="/auth/login" component={AuthLogin} />
           <Route exact path="/login" component={Login} />
           <Route exact path="/reg" component={Reg} />} />
           <Route path="/admin/login" component={AdminLogin} />

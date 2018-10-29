@@ -53,6 +53,15 @@ export const leftMenu = [
       }
     ]
   },
+  {
+    title: '授权',
+    state: 'auth',
+    icon: AccountBox,
+    children: [
+      // 我的授权（允许的第三方系统，用户绑定，申请），我的登录
+      { title: pathTitle['/account/info'], path: '/account/info' }
+    ]
+  },
   { title: '关于', path: '/about', icon: AccountBox }
 ];
 

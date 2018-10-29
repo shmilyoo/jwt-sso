@@ -4,6 +4,7 @@ import RenderTextField from './renderTextField';
 import RenderDatePicker from './renderDatePicker';
 import RenderSelectDeptField from './renderSelectDeptField';
 import RenderExps from './renderExps';
+import RenderRandomCode from './renderRandomCode';
 
 export {
   RenderInputSelect,
@@ -11,5 +12,6 @@ export {
   RenderTextField,
   RenderDatePicker,
   RenderSelectDeptField,
-  RenderExps
+  RenderExps,
+  RenderRandomCode
 };

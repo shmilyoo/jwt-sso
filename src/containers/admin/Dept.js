@@ -91,8 +91,7 @@ class Dept extends PureComponent {
       if (res.success) {
         // 将原始队列数据保存在本地，以便之后计算
         if (isMount) {
-          let level1Expands = getLevel1ExpandsfromTreeArray(res.data);
-          this.expands = level1Expands;
+          this.expands = getLevel1ExpandsfromTreeArray(res.data);
         }
         const result = makeDeptTree(res.data, this.expands);
         this.setState({
