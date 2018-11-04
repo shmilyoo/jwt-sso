@@ -3,12 +3,15 @@ import AccountBox from '@material-ui/icons/AccountBox';
 const config = {};
 
 export const pathTitle = {
+  '/': '首页',
   '/brief/mine': '个人概况',
   '/brief/department': '部门概况',
   '/account/info': '资料',
   '/account/changePasswd': '修改密码',
   '/account/changePasswd2': '修改密码2',
   '/account/changePasswd3': '修改密码3',
+  '/auth/bind': '用户绑定',
+  '/auth/sso': '统一登录',
   '/about': '关于',
   '/admin/organ/dept': '部门管理',
   '/admin/organ/person': '人员管理',
@@ -59,7 +62,8 @@ export const leftMenu = [
     icon: AccountBox,
     children: [
       // 我的授权（允许的第三方系统，用户绑定，申请），我的登录
-      { title: pathTitle['/account/info'], path: '/account/info' }
+      { title: pathTitle['/auth/bind'], path: '/auth/bind' },
+      { title: pathTitle['/auth/sso'], path: '/auth/sso' }
     ]
   },
   { title: '关于', path: '/about', icon: AccountBox }

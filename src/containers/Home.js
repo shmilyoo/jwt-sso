@@ -7,6 +7,7 @@ import LeftNav from '../components/LeftNav';
 import Info from './account/Info';
 import AppHead from './AppHead';
 import { sysName, leftMenu } from '../config';
+import AuthBind from './account/AuthBind';
 
 const drawerWidth = 250;
 
@@ -70,6 +71,7 @@ class Home extends React.Component {
             <Switch>
               <Route path="/account/info" component={Info} />
               <Route path="/account/passwd" component={null} />
+              <Route path="/auth/bind" component={AuthBind} />
               <Route path="/sso/reg" component={null} />
               <Route path="/about" component={null} />
             </Switch>

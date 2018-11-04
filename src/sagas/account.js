@@ -14,7 +14,6 @@ import history from '../history';
 function* regFlow() {
   while (true) {
     const { resolve, values } = yield take(accountTypes.SAGA_REG_REQUEST);
-    yield put({ type: commonTypes.START_LOADING });
     let { username, password1: password } = values;
     password = md5Passwd(password);
     const response = yield axios.post('account/reg', { username, password });
@@ -24,7 +23,6 @@ function* regFlow() {
     } else {
       yield put(stopSubmit('regForm', { _error: response.error }));
     }
-    yield put({ type: commonTypes.STOP_LOADING });
   }
 }
 
@@ -105,18 +103,17 @@ function* checkUsernameFlow() {
 
 /**
  * 在初始打开网页的时候到服务器获取用户认证相关信息
+ * cookie中本地无法获取id，在此获取用户的id
  */
-function* getUserInfoFlow() {
-  while (true) {
-    yield take(accountTypes.SAGA_GET_USER_AUTH_INFO);
-    // url中有username，header中有auth token，服务端综合判定
-    try {
-      yield axios.get('/account/auth');
-    } catch (e) {}
-
-    // yield put({ type: accountTypes.SAGA_FORCE_LOGOUT });
-    // yield put(commonActions.showMessage('远程验证出错，强制退出', 'warn'));
+function* checkUserAuthFlow() {
+  // while (true) {
+  yield take(accountTypes.SAGA_CHECK_USER_AUTH);
+  const res = yield axios.post('/account/auth');
+  if (res.success) {
+    const { id, username, active } = res.data;
+    yield put(accountActions.loginSuccess(id, username, active));
   }
+  // }
 }
 
 function* getBasicInfoFlow() {
@@ -174,7 +171,7 @@ function* setExpInfoFlow() {
 export default [
   fork(checkUsernameFlow),
   fork(regFlow),
-  fork(getUserInfoFlow),
+  fork(checkUserAuthFlow),
   fork(loginFlow),
   fork(getBasicInfoFlow),
   fork(setBasicInfoFlow),

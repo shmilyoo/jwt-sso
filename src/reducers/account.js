@@ -9,12 +9,15 @@ export const types = {
   CLEAR_AUTH: 'ACCOUNT/CLEAR_AUTH',
   SET_USER_BASIC_INFO: 'ACCOUNT/SET_USER_BASIC_INFO',
   SET_USER_EXP_INFO: 'ACCOUNT/SET_USER_EXP_INFO',
+  SET_USER_BINDS: 'ACCOUNT/SET_USER_BINDS',
   UPDATE_USER_BASIC_INFO: 'ACCOUNT/UPDATE_USER_BASIC_INFO',
-  SAGA_GET_USER_AUTH_INFO: 'ACCOUNT/SAGA_GET_USER_AUTH_INFO',
+  SAGA_CHECK_USER_AUTH: 'ACCOUNT/SAGA_CHECK_USER_AUTH',
   SAGA_GET_USER_BASIC_INFO: 'ACCOUNT/SAGA_GET_USER_BASIC_INFO',
   SAGA_GET_USER_EXP_INFO: 'ACCOUNT/SAGA_GET_USER_EXP_INFO',
   SAGA_SET_USER_EXP_INFO: 'ACCOUNT/SAGA_SET_USER_EXP_INFO',
   SAGA_SET_USER_BASIC_INFO: 'ACCOUNT/SAGA_SET_USER_BASIC_INFO', //basicinfo 页面submit
+  SAGA_GET_BINDS_REQUEST: 'ACCOUNT/SAGA_GET_BINDS_REQUEST',
+  SAGA_TOGGLE_BIND_REQUEST: 'ACCOUNT/SAGA_TOGGLE_BIND_REQUEST',
   SAGA_REG_REQUEST: 'ACCOUNT/SAGA_REG_REQUEST',
   SAGA_LOGIN_REQUEST: 'ACCOUNT/SAGA_LOGIN_REQUEST',
   SAGA_LOGOUT_REQUEST: 'ACCOUNT/SAGA_LOGOUT_REQUEST',
@@ -35,7 +38,7 @@ export const actions = {
     adminName,
     isSuperAdmin
   }),
-  userAuth: (id, username, active) => ({
+  userAuth: (username, active, id = '') => ({
     type: types.AUTH_INFO,
     id,
     username,
@@ -52,7 +55,7 @@ export const actions = {
     from
   }),
   loginSuccess: (id, username, active) =>
-    actions.userAuth(id, username, active),
+    actions.userAuth(username, active, id),
   logoutSuccess: () => ({ type: types.LOGOUT_SUCCESS }),
   getBasicInfo: () => ({ type: types.SAGA_GET_USER_BASIC_INFO }),
   setBasicInfo: data => ({ type: types.SET_USER_BASIC_INFO, data }),
@@ -64,7 +67,7 @@ export const actions = {
   /**
    * 在用户刷新网页，第一次加载时，如果本地cookie有用户信息，则增加一次远程验证
    */
-  getUserAuthInfo: () => ({ type: types.SAGA_GET_USER_AUTH_INFO }),
+  checkUserAuth: () => ({ type: types.SAGA_CHECK_USER_AUTH }),
   /**
    * @param {'work'|'education'} kind 经历类型
    */
@@ -82,15 +85,21 @@ export const actions = {
     type: types.SET_USER_EXP_INFO,
     kind,
     values
+  }),
+  setUserBinds: binds => ({
+    type: types.SET_USER_BINDS,
+    binds
   })
 };
 
 const initState = {
+  id: '',
   username: '',
   active: 2, // 账户状态: 0正常，1未激活,2禁用
   adminName: '',
   isSuperAdmin: false,
-  info: {} // {basic:{},work:[],education,[]}
+  info: {}, // {basic:{},work:[],education,[]}
+  binds: null
 };
 
 export default function accountReducer(state = initState, action) {
@@ -150,6 +159,11 @@ export default function accountReducer(state = initState, action) {
           ...state.info,
           [action.kind]: action.values
         }
+      };
+    case types.SET_USER_BINDS:
+      return {
+        ...state,
+        binds: action.binds
       };
     default:
       return state;

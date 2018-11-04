@@ -27,13 +27,13 @@ const initState = {};
 
 export default function accountReducer(state = initState, action) {
   switch (action.type) {
-    case types.AUTH_INFO:
-      return {
-        ...state,
-        id: action.id,
-        username: action.username,
-        active: action.active
-      };
+    // case types.AUTH_INFO:
+    //   return {
+    //     ...state,
+    //     id: action.id,
+    //     username: action.username,
+    //     active: action.active
+    //   };
     default:
       return state;
   }

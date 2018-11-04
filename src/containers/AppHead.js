@@ -38,7 +38,7 @@ const AppHead = ({ onMenuClick, logout, color, location: { pathname } }) => {
         <IconButton onClick={onMenuClick}>
           <MenuIcon />
         </IconButton>
-        <Typography style={{ flex: 'auto' }} variant="title">
+        <Typography style={{ flex: 'auto' }} variant="h6">
           {pathTitle[pathname]}
         </Typography>
         <IconButton>
