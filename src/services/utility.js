@@ -14,7 +14,7 @@ export const initAuthInfoAtStart = dispatch => {
   // decode token， state中dispatch设置username active 等信息，判断过期时间等
   const username = Cookies.get('username');
   const active = Number.parseInt(Cookies.get('active'), 10);
-  if (username && !active) {
+  if (username) {
     dispatch(accountActions.userAuth(username, active));
     // 如果本地保存有用户信息，则从服务器获取用户实时相关信息，避免本地信息过期或被篡改
     // todo 暂时取消下行，因为后端中间件会检查对比cookie和session信息，不一致则返回401
@@ -84,10 +84,10 @@ export const makeDeptTree = (deptArray, expanded) => {
     if (expanded === true || expanded[dept.id] === true) {
       tmp[dept.id].expanded = true;
     }
-    if (dept.parent_id !== '0') {
-      tmp[dept.parent_id].children
-        ? tmp[dept.parent_id].children.push(tmp[dept.id])
-        : (tmp[dept.parent_id].children = [tmp[dept.id]]);
+    if (dept.parentId !== '0') {
+      tmp[dept.parentId].children
+        ? tmp[dept.parentId].children.push(tmp[dept.id])
+        : (tmp[dept.parentId].children = [tmp[dept.id]]);
     } else {
       result.push(tmp[dept.id]);
     }

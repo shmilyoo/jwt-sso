@@ -106,7 +106,6 @@ const configureAxios = (dispatch, history) => {
       if (error.response && error.response.status === 401) {
         // 自定义401 auth 失败处理
         dispatch(accountActions.clearAuth());
-        dispatch(accountActions.sagaForceLogout());
         NProgress.done();
         return { success: false, error: error.message };
         // 这里throw错误需要在saga中处理，要不然saga会死掉

@@ -44,22 +44,27 @@ class RenderSelectDeptField extends React.PureComponent {
 
   handleSelectDept = () => {
     const nodeId = this.state.selectedNode.id;
+    // 在类实例中保存nodes对象，存储每个节点信息，以便检索生成titles
     if (!this.nodes) {
       this.nodes = {};
-      this.state.treeArray.forEach(({ id, parent_id, name }) => {
-        this.nodes[id] = { id, parent_id, name };
+      this.state.treeArray.forEach(({ id, parentId, name }) => {
+        this.nodes[id] = { id, parentId, name };
       });
     }
     let titles = [];
     let current = nodeId;
     while (true) {
       titles.unshift(this.nodes[current].name);
-      current = this.nodes[current].parent_id;
+      current = this.nodes[current].parentId;
       if (current === '0') break;
     }
     //store存储数据格式为{id:deptId,names:'rootName-childName-...-deptName'}
     const names = titles.join('-');
-    this.props.input.onChange({ id: nodeId, names });
+    this.props.input.onChange({
+      id: nodeId,
+      names,
+      name: titles[titles.length - 1]
+    });
     this.setState({ open: false });
     // this.setState({ open: false, inputValue: names });
   };
@@ -88,7 +93,7 @@ class RenderSelectDeptField extends React.PureComponent {
         <TextField
           label={label}
           {...inputRest}
-          value={value && value.names}
+          value={value && value.names ? value.names : ''}
           onBlur={() => onBlur()} // 因为field的value和显示的文字不同，这样避免onblur更改value
           fullWidth
           error={!!(touched && error)}
@@ -99,11 +104,12 @@ class RenderSelectDeptField extends React.PureComponent {
         />
         <Dialog open={open} fullWidth>
           <DialogTitle>选择工作部门</DialogTitle>
-          <DialogContent style={{ height: '500px' }}>
+          <DialogContent style={{ height: '100%', minHeight: '300px' }}>
             <Tree
               hideHead
               canDrop={() => false}
               treeData={treeData}
+              isVirtualized={false}
               onChange={this.handleTreeChange}
               onTreeNodeSelected={this.handleTreeNodeSelected}
               onTreeNodeUnSelected={this.handleTreeNodeUnSelected}

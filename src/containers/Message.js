@@ -21,13 +21,16 @@ function mapDispatchToProps(dispatch) {
 }
 const styles = theme => ({
   info: {
-    backgroundColor: theme.palette.info.main
+    backgroundColor: theme.palette.info.main,
+    color: theme.palette.info.contrastText
   },
   warn: {
-    backgroundColor: theme.palette.warn.main
+    backgroundColor: theme.palette.warn.main,
+    color: theme.palette.info.contrastText
   },
   error: {
-    backgroundColor: theme.palette.error.main
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.info.contrastText
   }
 });
 const Message = ({

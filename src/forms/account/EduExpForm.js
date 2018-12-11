@@ -2,28 +2,34 @@ import React from 'react';
 import { reduxForm, FieldArray } from 'redux-form';
 import compose from 'recompose/compose';
 import { Button, Grid, withStyles } from '@material-ui/core';
-import renderExps from '../renderFields/renderExps';
+import renderEduExps from '../renderFields/renderEduExps';
 import classnames from 'classnames';
 
 const style = {
   hide: {
     display: 'none'
+  },
+  btnLine: {
+    marginTop: '2rem'
   }
 };
 
-const ExperienceForm = props => {
+const EduExpForm = props => {
   const { pristine, submitting, reset, handleSubmit, classes } = props;
   console.log('Experience form render');
   return (
     <form onSubmit={handleSubmit}>
       <Grid container direction="column">
-        <FieldArray name="exps" component={renderExps} />
+        <FieldArray name="exps" component={renderEduExps} />
         <Grid
           item
           container
           justify="center"
           spacing={32}
-          className={classnames({ [classes.hide]: pristine })}
+          className={classnames({
+            [classes.hide]: pristine,
+            [classes.btnLine]: true
+          })}
         >
           <Grid item>
             <Button
@@ -53,4 +59,4 @@ const ExperienceForm = props => {
 export default compose(
   withStyles(style),
   reduxForm()
-)(ExperienceForm);
+)(EduExpForm);

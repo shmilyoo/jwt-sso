@@ -4,7 +4,7 @@ import compose from 'recompose/compose';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core';
 import LeftNav from '../components/LeftNav';
-import Info from './account/Info';
+import Info from './account/info';
 import AppHead from './AppHead';
 import { sysName, leftMenu } from '../config';
 import AuthBind from './account/AuthBind';

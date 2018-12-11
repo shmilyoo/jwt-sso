@@ -12,9 +12,9 @@ export const types = {
   SET_USER_BINDS: 'ACCOUNT/SET_USER_BINDS',
   UPDATE_USER_BASIC_INFO: 'ACCOUNT/UPDATE_USER_BASIC_INFO',
   SAGA_CHECK_USER_AUTH: 'ACCOUNT/SAGA_CHECK_USER_AUTH',
-  SAGA_GET_USER_BASIC_INFO: 'ACCOUNT/SAGA_GET_USER_BASIC_INFO',
-  SAGA_GET_USER_EXP_INFO: 'ACCOUNT/SAGA_GET_USER_EXP_INFO',
-  SAGA_SET_USER_EXP_INFO: 'ACCOUNT/SAGA_SET_USER_EXP_INFO',
+  SAGA_GET_USER_BASIC_INFO: 'ACCOUNT/SAGA_GET_USER_BASIC_INFO', // 获取用户基本信息
+  SAGA_GET_USER_EXP_INFO: 'ACCOUNT/SAGA_GET_USER_EXP_INFO', // 获取用户经历
+  SAGA_SET_USER_EXP_INFO: 'ACCOUNT/SAGA_SET_USER_EXP_INFO', // 设置用户经历
   SAGA_SET_USER_BASIC_INFO: 'ACCOUNT/SAGA_SET_USER_BASIC_INFO', //basicinfo 页面submit
   SAGA_GET_BINDS_REQUEST: 'ACCOUNT/SAGA_GET_BINDS_REQUEST',
   SAGA_TOGGLE_BIND_REQUEST: 'ACCOUNT/SAGA_TOGGLE_BIND_REQUEST',
@@ -47,7 +47,6 @@ export const actions = {
   clearAuth: () => ({
     type: types.CLEAR_AUTH
   }),
-  sagaForceLogout: () => ({ type: types.SAGA_FORCE_LOGOUT }),
   userLogin: (resolve, values, from) => ({
     type: types.SAGA_LOGIN_REQUEST,
     resolve,
@@ -69,12 +68,15 @@ export const actions = {
    */
   checkUserAuth: () => ({ type: types.SAGA_CHECK_USER_AUTH }),
   /**
-   * @param {'work'|'education'} kind 经历类型
+   * @param {'work'|'edu'} kind 经历类型
    */
-  getExpInfo: kind => ({
-    type: types.SAGA_GET_USER_EXP_INFO,
-    kind
-  }),
+  getExpInfo: kind => {
+    if (kind === 'work' || kind === 'edu') {
+      return { type: types.SAGA_GET_USER_EXP_INFO, kind };
+    } else {
+      throw '未知的经验类别信息';
+    }
+  },
   setExpInfoRequest: (resolve, kind, values) => ({
     type: types.SAGA_SET_USER_EXP_INFO,
     resolve,
@@ -99,7 +101,9 @@ const initState = {
   adminName: '',
   isSuperAdmin: false,
   info: {}, // {basic:{},work:[],education,[]}
-  binds: null
+  binds: null, // 第三方系统的绑定关系
+  workExp: null, // 工作经历
+  eduExp: null // 教育经历
 };
 
 export default function accountReducer(state = initState, action) {
@@ -139,6 +143,7 @@ export default function accountReducer(state = initState, action) {
     case types.SET_USER_BASIC_INFO:
       return {
         ...state,
+        active: 0,
         info: {
           ...state.info,
           basic: action.data
@@ -155,10 +160,7 @@ export default function accountReducer(state = initState, action) {
     case types.SET_USER_EXP_INFO:
       return {
         ...state,
-        info: {
-          ...state.info,
-          [action.kind]: action.values
-        }
+        [`${action.kind}Exp`]: action.values
       };
     case types.SET_USER_BINDS:
       return {

@@ -25,16 +25,16 @@ import DeptForm from '../../forms/admin/DeptForm';
 // import DeptForm from '../../forms/admin/DeptForm';
 
 const style = () => ({
-  root: {
-    display: 'flex'
-  },
-  leftDept: {
-    backgroundColor: '#aaa'
-  },
-  rightDept: {
-    backgroundColor: '#888',
-    flex: 'auto'
-  },
+  // root: {
+  //   display: 'flex'
+  // },
+  // leftDept: {
+  //   backgroundColor: '#aaa'
+  // },
+  // rightDept: {
+  //   backgroundColor: '#888',
+  //   flex: 'auto'
+  // },
   modeLink: {
     marginLeft: '2rem',
     cursor: 'pointer',
@@ -172,15 +172,12 @@ class Dept extends PureComponent {
         treeDataDic[node.id] = node;
       });
       node = treeDataDic[id];
-      parentName =
-        node.parent_id === '0' ? '' : treeDataDic[node.parent_id].name;
+      parentName = node.parentId === '0' ? '' : treeDataDic[node.parentId].name;
       this.setState({ treeDataDic });
     } else {
       node = this.state.treeDataDic[id];
       parentName =
-        node.parent_id === '0'
-          ? ''
-          : this.state.treeDataDic[node.parent_id].name;
+        node.parentId === '0' ? '' : this.state.treeDataDic[node.parentId].name;
     }
     this.setState({
       treeNodeSelected: {
@@ -188,7 +185,7 @@ class Dept extends PureComponent {
         title: node.name,
         symbol: node.symbol,
         intro: node.intro,
-        parentId: node.parent_id,
+        parentId: node.parentId,
         parentName
       }
     });

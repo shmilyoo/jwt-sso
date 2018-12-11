@@ -7,6 +7,10 @@ export const pathTitle = {
   '/brief/mine': '个人概况',
   '/brief/department': '部门概况',
   '/account/info': '资料',
+  '/account/info/basic': '基本资料',
+  '/account/info/edu': '教育经历',
+  '/account/info/work': '工作经历',
+  '/account/info/family': '家庭关系',
   '/account/changePasswd': '修改密码',
   '/account/changePasswd2': '修改密码2',
   '/account/changePasswd3': '修改密码3',
@@ -41,7 +45,7 @@ export const leftMenu = [
     state: 'account',
     icon: AccountBox,
     children: [
-      { title: pathTitle['/account/info'], path: '/account/info' },
+      { title: pathTitle['/account/info'], path: '/account/info/basic' },
       {
         title: pathTitle['/account/changePasswd'],
         path: '/account/changePasswd'

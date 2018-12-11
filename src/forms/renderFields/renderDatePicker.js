@@ -51,7 +51,9 @@ class CustomInput extends React.PureComponent {
 }
 
 const RenderDatePicker = ({
-  showTime,
+  // showTime,
+  showYearDropdown,
+  showMonthDropdown,
   label,
   todayBtnText,
   canClear,
@@ -59,7 +61,8 @@ const RenderDatePicker = ({
   minDate,
   maxDate,
   input: { value, onChange, ...inputRest }, // value为moment实例
-  meta
+  meta,
+  ...rest
 }) => {
   return (
     <div
@@ -78,18 +81,19 @@ const RenderDatePicker = ({
             meta={meta}
           />
         }
-        showTimeSelect={showTime}
-        todayButton={todayBtnText}
+        // showTimeSelect={showTime}
+        // todayButton="{todayBtnText}"
         timeFormat="HH:mm"
         dateFormat="YYYY-MM-DD"
         selected={value} // value是input.value
         onChange={onChange}
-        showYearDropdown
-        showMonthDropdown
+        showYearDropdown={showYearDropdown}
+        showMonthDropdown={showMonthDropdown}
         yearDropdownItemNumber={100} // 设置合适的数值，这个要不然得一个一个点，不方便
         minDate={minDate ? moment(minDate) : moment('1970-01-01')}
         maxDate={maxDate ? moment(maxDate) : moment()}
         scrollableYearDropdown
+        {...rest}
       />
     </div>
   );
@@ -108,7 +112,9 @@ RenderDatePicker.propTypes = {
 RenderDatePicker.defaultProps = {
   nullText: '',
   todayBtnText: '',
-  canClear: false
+  canClear: false,
+  showYearDropdown: true,
+  showMonthDropdown: true
 };
 
 export default RenderDatePicker;

@@ -1,12 +1,12 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import ExperienceForm from '../../forms/account/ExperienceForm';
+import WorkExpForm from '../../../forms/account/WorkExpForm';
 import compose from 'recompose/compose';
-import { actions as accountActions } from '../../reducers/account';
-import { syncCheckExpDate } from '../../services/validate';
+import { actions as accountActions } from '../../../reducers/account';
+import { syncCheckExpDate } from '../../../services/validate';
 import { SubmissionError } from 'redux-form';
 
-class InfoExp extends PureComponent {
+class InfoWorkExp extends PureComponent {
   componentDidMount() {
     const { exps, dispatch, type } = this.props;
     console.log('mount exp info ', type);
@@ -32,7 +32,7 @@ class InfoExp extends PureComponent {
     const { type, exps } = this.props;
     return (
       <div>
-        <ExperienceForm
+        <WorkExpForm
           form={`${type}ExpForm`}
           enableReinitialize
           onSubmit={this.handleSubmit}
@@ -43,7 +43,7 @@ class InfoExp extends PureComponent {
   }
 }
 
-InfoExp.propTypes = {};
+InfoWorkExp.propTypes = {};
 
 function mapStateToProps(state, ownProps) {
   return {
@@ -51,4 +51,4 @@ function mapStateToProps(state, ownProps) {
   };
 }
 
-export default compose(connect(mapStateToProps))(InfoExp);
+export default compose(connect(mapStateToProps))(InfoWorkExp);

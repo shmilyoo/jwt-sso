@@ -1,34 +1,36 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
 import { withStyles, Grid, Typography } from '@material-ui/core';
 import history from '../../history';
-import compose from 'recompose/compose';
 import qs from 'qs';
+import compose from 'recompose/compose';
 
 const style = theme => ({
   root: {
-    height: '100%'
+    height: '90%'
   },
-  link: theme.sharedClass.link
+  link: {
+    ...theme.sharedClass.link,
+    marginLeft: '1rem'
+  }
 });
 
 class CountDownRedirect extends PureComponent {
   constructor(props) {
     super(props);
-    const { content, redirect, countDown } = qs.parse(
-      this.props.location.search,
-      { ignoreQueryPrefix: true }
-    );
     this.state = {
-      countDown: Number.parseInt(countDown) || 5,
-      content: content || '发生错误',
-      redirect: redirect || '/'
+      content: '',
+      to: '/'
     };
   }
   componentDidMount() {
+    const { content, to, count = 5 } = qs.parse(this.props.location.search, {
+      ignoreQueryPrefix: true
+    });
+    this.setState({ content, to, countDown: count });
     this.timer = setInterval(this.count, 1000);
   }
+
   componentWillUnmount() {
     clearInterval(this.timer);
   }
@@ -36,56 +38,77 @@ class CountDownRedirect extends PureComponent {
     this.setState({ countDown: this.state.countDown - 1 });
   };
   redirect = () => {
-    const redirect = this.state.redirect;
-    redirect.includes('http')
-      ? (global.location = redirect)
-      : history.push(redirect);
+    const to = this.state.to;
+    if (to.startsWith('http://') || to.startsWith('https://')) {
+      global.location = to;
+    } else history.push(to);
   };
+
   render() {
     const { classes } = this.props;
-    const { content, countDown } = this.state;
+    const { countDown, content } = this.state;
     if (countDown === 0) {
       clearInterval(this.timer);
       this.redirect();
     }
     return (
       <Grid
+        className={classes.root}
         container
         justify="center"
         alignItems="center"
-        className={classes.root}
       >
-        <Grid item xs={1} />
-        <Grid item xs={2}>
-          {countDown}
+        <Grid item xs={4} />
+        <Grid item xs={4} container justify="center" spacing={24}>
+          <Grid item>{countDown}</Grid>
+          <Grid item xs container direction="column">
+            <Grid item>{content}</Grid>
+            <Grid item container>
+              <Grid item>
+                <Typography>正在为您跳转到目标页,</Typography>
+              </Grid>
+              <Grid item>
+                <Typography className={classes.link} onClick={this.redirect}>
+                  直接跳转
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography
+                  className={classes.link}
+                  onClick={() => {
+                    history.push('/');
+                  }}
+                >
+                  首页
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography
+                  className={classes.link}
+                  onClick={() => {
+                    history.push('/reg');
+                  }}
+                >
+                  注册
+                </Typography>
+              </Grid>
+              <Grid item>
+                <Typography
+                  className={classes.link}
+                  onClick={() => {
+                    history.push('/login');
+                  }}
+                >
+                  登录
+                </Typography>
+              </Grid>
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid item xs>
-          <div>
-            <Typography>{content}</Typography>
-          </div>
-          <div>
-            <Typography>
-              直接
-              <Link to="#" onClick={this.redirect}>
-                点击此处
-              </Link>
-              跳转
-            </Typography>
-          </div>
-        </Grid>
-        <Grid item xs={1} />
+        <Grid item xs={4} />
       </Grid>
     );
   }
 }
-
-CountDownRedirect.propTypes = {
-  redirect: PropTypes.string.isRequired,
-  seconds: PropTypes.number
-};
-
-CountDownRedirect.defaultValue = {
-  countDown: 5
-};
 
 export default compose(withStyles(style))(CountDownRedirect);

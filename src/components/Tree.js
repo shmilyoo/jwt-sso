@@ -126,7 +126,7 @@ class Tree extends React.PureComponent {
         <div
           className={classnames(classes.head, { [classes.hideHead]: hideHead })}
         >
-          <Typography variant="title" align="center">
+          <Typography variant="h6" align="center">
             {title}
           </Typography>
           <IconButton

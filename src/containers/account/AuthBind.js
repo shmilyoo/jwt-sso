@@ -51,8 +51,8 @@ class AuthBind extends PureComponent {
                 {binds.map((bind, index) => (
                   <TableRow key={bind.id}>
                     <TableCell scope="row">{index}</TableCell>
-                    <TableCell>{bind.sso_symbol}</TableCell>
-                    <TableCell>{bind.sso_user_name}</TableCell>
+                    <TableCell>{bind.ssoSymbol}</TableCell>
+                    <TableCell>{bind.ssoUsername}</TableCell>
                     <TableCell>
                       <Button
                         className={classNames({

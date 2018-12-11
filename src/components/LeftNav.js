@@ -53,21 +53,24 @@ const style = {
 };
 
 class LeftNav extends React.PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      // 由于普通用户界面和管理员界面的url层次不同，/account/info, /admin/organ/dept
-      // 为便于初始打开页面时左侧导航栏根据path自动展开，需要在mount的时候分析path
-      [props.location.pathname.split('/')[props.type === 'admin' ? 2 : 1]]: true
-    };
+  state = {};
+
+  static getDerivedStateFromProps(props, state) {
+    const key = props.location.pathname.split('/')[
+      props.type === 'admin' ? 2 : 1
+    ];
+    // 由于普通用户界面和管理员界面的url层次不同，/account/info, /admin/organ/dept
+    // 为便于初始打开页面时左侧导航栏根据path自动展开，需要在mount的时候分析path
+    if (!state[key]) {
+      return {
+        [key]: true
+      };
+    }
+    return null;
   }
 
   drawItemClick = url => () => {
-    // this.props.dispatch({ type: commonTypes.CHANGE_TITLE, title }); 在各自页面中设置title
-    // console.log(this.props.location.pathname, url);
-    if (this.props.location.pathname === url) {
-      return;
-    }
+    if (this.props.location.pathname === url) return;
     history.push(url);
   };
 

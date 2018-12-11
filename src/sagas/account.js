@@ -27,56 +27,42 @@ function* regFlow() {
 }
 
 function* loginFlow() {
-  let isLogin = !!Cookies.get('username');
   while (true) {
-    console.log('login flow start');
-    if (!isLogin) {
-      // 如果页面是未登录状态
-      console.log('wait for login request');
-      let { resolve, values, from } = yield take(
-        accountTypes.SAGA_LOGIN_REQUEST
+    let { resolve, values, from } = yield take(accountTypes.SAGA_LOGIN_REQUEST);
+    const username = values.username.toLowerCase();
+    const password = md5Passwd(values.password);
+    const remember = !!values.remember;
+    const response = yield axios.post('account/login', {
+      username,
+      password,
+      remember
+    });
+    if (response.success) {
+      yield call(resolve);
+      yield put(
+        accountActions.loginSuccess(
+          response.data.id,
+          username,
+          response.data.active
+        )
       );
-      const username = values.username.toLowerCase();
-      const password = md5Passwd(values.password);
-      const remember = !!values.remember;
-      const response = yield axios.post('account/login', {
-        username,
-        password,
-        remember
-      });
-      if (response.success) {
-        yield call(resolve);
-        yield put(
-          accountActions.loginSuccess(
-            response.data.id,
-            username,
-            response.data.active
-          )
-        );
-        isLogin = true;
-        yield call(history.push, from.pathname); // 根据url的redirect进行跳转
-      } else {
-        isLogin = false;
-        yield put(stopSubmit('loginForm', { _error: response.error }));
-      }
-      console.log(`log in end, islogin is ${isLogin}`);
+      yield call(history.push, from.pathname); // 根据url的redirect进行跳转
+    } else {
+      yield put(stopSubmit('loginForm', { _error: response.error }));
     }
-    if (isLogin) {
-      console.log('等待logout请求');
-      const { type } = yield take([
-        accountTypes.SAGA_LOGOUT_REQUEST,
-        accountTypes.SAGA_FORCE_LOGOUT
-      ]);
-      if (type === accountTypes.SAGA_LOGOUT_REQUEST) {
-        const response = yield axios.post('/account/logout');
-        if (response.success) {
-          yield put(accountActions.logoutSuccess());
-        } else {
-          yield put(accountActions.clearAuth());
-        }
-      }
-      isLogin = false;
+  }
+}
+
+function* logoutFlow() {
+  while (true) {
+    const { type } = yield take([
+      accountTypes.SAGA_LOGOUT_REQUEST,
+      accountTypes.SAGA_FORCE_LOGOUT
+    ]);
+    if (type === accountTypes.SAGA_LOGOUT_REQUEST) {
+      yield axios.post('/account/logout');
     }
+    yield put(accountActions.clearAuth());
   }
 }
 
@@ -143,10 +129,10 @@ function* setBasicInfoFlow() {
 
 function* getExpInfoFlow() {
   while (true) {
-    const { kind: type } = yield take(accountTypes.SAGA_GET_USER_EXP_INFO);
-    const response = yield axios.get(`/account/info/exp/${type}`);
+    const { kind } = yield take(accountTypes.SAGA_GET_USER_EXP_INFO);
+    const response = yield axios.get(`/account/info/exp/${kind}`);
     if (response.success) {
-      yield put(accountActions.setExpInfo(type, response.data));
+      yield put(accountActions.setExpInfo(kind, response.data));
     }
   }
 }
@@ -173,6 +159,7 @@ export default [
   fork(regFlow),
   fork(checkUserAuthFlow),
   fork(loginFlow),
+  fork(logoutFlow),
   fork(getBasicInfoFlow),
   fork(setBasicInfoFlow),
   fork(getExpInfoFlow),

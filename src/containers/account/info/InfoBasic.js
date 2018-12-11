@@ -1,8 +1,8 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
-import BasicInfoForm from '../../forms/account/BasicInfoForm';
+import BasicInfoForm from '../../../forms/account/BasicInfoForm';
 import compose from 'recompose/compose';
-import { actions as accountActions } from '../../reducers/account';
+import { actions as accountActions } from '../../../reducers/account';
 
 class InfoBasic extends PureComponent {
   componentDidMount() {
