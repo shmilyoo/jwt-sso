@@ -27,8 +27,8 @@ export const pathTitle = {
 };
 
 export const sysName = '统一认证系统';
-export const server_base_url_product = '';
-export const server_baseURL_dev = 'http://localhost:7001';
+// export const server_base_url_product = '';
+// export const server_baseURL_dev = 'http://localhost:7001';
 // 没有children就有path属性，反之则有state属性表明类别
 export const leftMenu = [
   {

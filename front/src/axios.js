@@ -1,11 +1,14 @@
 // request.js
 import axios from 'axios';
+import url from 'url';
 import NProgress from 'nprogress';
 import { actions as commonActions } from './reducers/common';
 import { actions as accountActions } from './reducers/account';
 // import { notification, message } from "antd";
 // import { routerRedux } from "dva/router";
 // import store from "../index";
+
+const isProduction = process.env.NODE_ENV === 'production';
 
 /**
  * 一、功能：
@@ -56,6 +59,15 @@ const configureAxios = (dispatch, history) => {
     config => {
       // 请求开始，蓝色过渡滚动条开始出现
       NProgress.start();
+      if (isProduction) {
+        // 生产环境下，设置为后端服务器地址前缀
+        if (config.url && config.url[0] === '/') {
+          config.url = url.resolve('/server-api/', config.url.slice(1));
+        }
+        console.log('config.baseURL production ', config.url);
+      } else {
+        console.log('config.baseURL development ', config.url);
+      }
       // if (process.env.NODE_ENV === 'production') {
       //   // 生产环境下，设置为后端服务器地址
       //   config.baseURL = server_base_url_product;
